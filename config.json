@@ -1,0 +1,42 @@
+{
+  "ntfy_topic": "wird-aus-github-secret-gelesen",
+  "interval_minutes": 10,
+  "max_price": 80000,
+  "min_year": 2021,
+  "max_km": null,
+  "must_contain": [
+    "taycan"
+  ],
+  "exclude": [
+    "unfall",
+    "motorschaden",
+    "export",
+    "suche"
+  ],
+  "searches": [
+    {
+      "name": "mobile.de Approved",
+      "platform": "mobile",
+      "url": "https://suchen.mobile.de/fahrzeuge/search.html?isSearchRequest=true&s=Car&vc=Car&sb=doc&od=down&ms=20100%3B%3B%3BTaycan&p=%3A80000&fr=2021%3A&vat=1&q=approved"
+    },
+    {
+      "name": "AutoScout24 Approved",
+      "platform": "autoscout",
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&priceto=80000&fregfrom=2021&vatded=true&search_query=approved"
+    },
+    {
+      "name": "Kleinanzeigen Approved",
+      "platform": "kleinanzeigen",
+      "url": "https://www.kleinanzeigen.de/s-autos/preis::80000/porsche-taycan-approved/k0c216"
+    },
+    {
+      "name": "eBay Approved",
+      "platform": "ebay",
+      "url": "https://www.ebay.de/sch/9801/i.html?_nkw=porsche+taycan+approved&_sop=10&_udhi=80000"
+    }
+  ],
+  "max_pages": 8,
+  "notify_price_drop": true,
+  "notify_removed": false,
+  "timezone": "Europe/Berlin"
+}
