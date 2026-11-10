@@ -342,6 +342,8 @@ def analyse_text(title: str, body: str, platform: str, now: datetime) -> dict:
         or re.search(r"(\d{2,3})\s*%\s*(?:soh|batterie|battery|akku)", full, re.I)
     if m and 60 <= int(m.group(1)) <= 100:
         out["soh"] = int(m.group(1))
+    if re.search(r"\b(china|chinesisch|re-?import|eu-?import|import(fahrzeug|wagen)?|us-?fahrzeug|ausländisch)\b", full, re.I):
+        out["import"] = True
     ps = find_ps(full)
     if ps:
         out["ps"] = ps
@@ -838,6 +840,7 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
 
     # ---------- 2) Funde einarbeiten
     platform_ok: dict[str, bool] = {}
+    search_year = {(x.get("name") or x["platform"]): x.get("year") for x in cfg["searches"]}
     for pid, found in found_by_platform.items():
         names = [n for n, st in search_status.items() if st["platform"] == pid]
         ok_any = any(search_status[n]["error"] is None for n in names)
@@ -848,8 +851,15 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
         if not ok_any:
             continue
         platform_baseline = baseline_run or not pst.get("count")
+        prev = pst.get("count") or 0
+        suspicious = full and prev >= 10 and len(found) < 0.6 * prev
+        if suspicious:
+            pst["error"] = f"Nur {len(found)} statt ~{prev} Inserate geladen – Verkäufe in diesem Lauf nicht gewertet"
+            log.warning("  %s: %s", pid, pst["error"])
         for key, (it, sname) in found.items():
             data = {k: it.get(k) for k in ("title", "url", "price", "year", "km", "image", "snippet")}
+            if not data["year"] and search_year.get(sname):
+                data["year"] = search_year[sname]         # Suche war auf ein Baujahr begrenzt
             if key in state["removed"]:                       # wieder aufgetaucht
                 rec = state["removed"].pop(key)
                 for k in ("removed", "gone_reason"):
@@ -887,11 +897,11 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
                 if data["price"] < old_price and not rec.get("excluded"):
                     rec["notify_drop"] = old_price - data["price"]
             refresh_derived(rec, now, cfg)
-        if full and ok_any:
+        if full and ok_any and not suspicious:
             pst["count"] = sum(1 for r in state["listings"].values() if r["platform"] == pid and not r.get("excluded"))
 
         # ---------- 3) fehlende Autos (nur im Vollscan, nur wenn alle Suchen des Autos vollständig liefen)
-        if full:
+        if full and not suspicious:
             for key in [k for k, r in state["listings"].items() if r["platform"] == pid and k not in found]:
                 rec = state["listings"][key]
                 srcs = set(rec.get("src") or []) or set(names)
@@ -1094,7 +1104,7 @@ def dump_debug(pid: str, name: str, html: str) -> None:
 # ==========================================================================
 PUBLIC_KEYS = ("key", "platform", "title", "url", "price", "year", "km", "ps", "image", "snippet", "description",
                "first_seen", "baseline", "prices", "removed", "gone_reason", "model", "body", "approved",
-               "approved_until", "vat", "seller", "equip", "damage", "soh", "price_odd", "detail_at")
+               "approved_until", "vat", "seller", "equip", "damage", "soh", "price_odd", "detail_at", "import")
 
 
 def write_outputs(state: dict, now: datetime, mode: str, detail_count: int) -> None:

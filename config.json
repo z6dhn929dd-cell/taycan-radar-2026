@@ -4,7 +4,7 @@
   "full_scan_minutes": 60,
   "quick_pages": 2,
   "max_pages": 20,
-  "details_per_run": 40,
+  "details_per_run": 80,
   "detail_refresh_days": 7,
   "timezone": "Europe/Berlin",
   "notify": {
@@ -36,22 +36,37 @@
     {
       "name": "AutoScout24 · 2021",
       "platform": "autoscout",
-      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2021&fregto=2021"
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2021&fregto=2021",
+      "year": 2021
     },
     {
       "name": "AutoScout24 · 2022",
       "platform": "autoscout",
-      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2022&fregto=2022"
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2022&fregto=2022",
+      "year": 2022
     },
     {
       "name": "AutoScout24 · 2023",
       "platform": "autoscout",
-      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2023&fregto=2023"
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2023&fregto=2023",
+      "year": 2023
     },
     {
-      "name": "AutoScout24 · ab 2024",
+      "name": "AutoScout24 · 2024",
       "platform": "autoscout",
-      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2024"
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2024&fregto=2024",
+      "year": 2024
+    },
+    {
+      "name": "AutoScout24 · 2025",
+      "platform": "autoscout",
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2025&fregto=2025",
+      "year": 2025
+    },
+    {
+      "name": "AutoScout24 · ab 2026",
+      "platform": "autoscout",
+      "url": "https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D&fregfrom=2026"
     },
     {
       "name": "AutoScout24 · ohne Filter",
