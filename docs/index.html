@@ -755,6 +755,7 @@ function card(r, kind){
   if(r.seller) badges.push(`<span class="badge soft">${r.seller==="privat"?"Privat":"Händler"}</span>`);
   if(r.damage==="vorschaden") badges.push(`<span class="badge bad">Vorschaden</span>`);
   if(r.damage==="unfallfrei") badges.push(`<span class="badge soft">unfallfrei</span>`);
+  if(r.import) badges.push(`<span class="badge warn">Import</span>`);
   if(r.soh) badges.push(`<span class="badge soft">Akku ${r.soh} %</span>`);
   if(drop>0) badges.push(`<span class="badge good">Preis −${eur(drop)}</span>`);
   (r.also||[]).forEach(p=>badges.push(`<span class="badge soft">auch auf ${esc(NAMES[p]||p)}</span>`));
