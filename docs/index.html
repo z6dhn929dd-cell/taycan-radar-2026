@@ -8,50 +8,33 @@
 </head><body>
 <title>Taycan Radar Markt</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Taycan Radar">
-<meta name="theme-color" content="#050505">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: Approved-Edition look – black lacquer, white hairlines, light-bar. Header → tabs → range; Übersicht = KPI strip, platform ledger, two small charts, market pulse; Neu/Verkauft = vehicle cards with preview. Single dark theme by choice. */
+/* Layout: Approved-Edition look – black lacquer, white hairlines, light-bar. Header → tab rail → criteria bar → tab views. Single dark theme by choice. */
 :root{
   color-scheme: dark;
-  --black:#050505;
-  --panel:#0d0d0e;
-  --raise:#161618;
-  --white:#f5f5f3;
-  --grey:#8a8a8c;
-  --dim:#5a5a5c;
-  --hair:rgba(245,245,243,.12);
-  --hair-strong:rgba(245,245,243,.32);
-  --glow:rgba(255,255,255,.55);
-  --up:#cfe9db;        /* Zugang – sehr helles Grün, bleibt im Schwarz-Weiß-Look */
-  --down:#8a8a8c;      /* Abgang – Grau */
-  --warn:#e8c98a;
+  --black:#050505; --panel:#0d0d0e; --raise:#161618; --white:#f5f5f3; --grey:#8a8a8c; --dim:#5a5a5c;
+  --hair:rgba(245,245,243,.12); --hair-strong:rgba(245,245,243,.32); --glow:rgba(255,255,255,.55);
+  --good:#9fdcb8; --good-bg:rgba(159,220,184,.12);
+  --warn:#e8c98a; --warn-bg:rgba(232,201,138,.12);
+  --bad:#f0a08c; --bad-bg:rgba(240,160,140,.12);
+  --up:#cfe9db; --down:#8a8a8c;
   --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{background:var(--black)}
-body{
-  background:var(--black);color:var(--white);
-  font-family:var(--f-display);font-stretch:100%;font-size:15px;line-height:1.5;
-  background-image:radial-gradient(1200px 500px at 50% -20%, rgba(255,255,255,.06), transparent 60%);
-}
-.wrap{
-  max-width:1080px;margin:0 auto;
-  padding-block:30px 64px;
-  padding-left:max(16px, env(safe-area-inset-left, 0px));
-  padding-right:max(16px, env(safe-area-inset-right, 0px));
-  display:flex;flex-direction:column;gap:26px;
-}
+body{background:var(--black);color:var(--white);font-family:var(--f-display);font-size:15px;line-height:1.5;
+  background-image:radial-gradient(1200px 500px at 50% -20%, rgba(255,255,255,.06), transparent 60%)}
+.wrap{max-width:1120px;margin:0 auto;padding-block:26px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:22px}
 .num{font-variant-numeric:tabular-nums}
+a{color:inherit}
 
-/* ---------- Header ---------- */
-header{display:flex;flex-direction:column;gap:18px}
+/* Header */
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .mark{display:flex;align-items:center;gap:16px}
 .lamps{display:grid;grid-template-columns:repeat(2,7px);gap:4px;padding:8px;border:1px solid var(--hair-strong);border-radius:14px}
@@ -59,159 +42,213 @@ header{display:flex;flex-direction:column;gap:18px}
 h1{margin:0;font-weight:300;font-stretch:125%;letter-spacing:.32em;text-transform:uppercase;font-size:clamp(18px,4.6vw,28px);line-height:1.1}
 h1 b{font-weight:700}
 .eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);margin-top:6px}
-.status{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--grey);display:flex;align-items:center;gap:10px;text-align:right}
+.status{font-family:var(--f-mono);font-size:12px;letter-spacing:.04em;color:var(--grey);display:flex;align-items:center;gap:10px}
 .status .led{width:6px;height:6px;border-radius:50%;background:var(--grey);flex:none}
 .status.live{color:var(--white)}
 .status.live .led{background:var(--white);box-shadow:0 0 10px var(--white);animation:blink 1.8s ease-in-out infinite}
 @keyframes blink{50%{opacity:.3}}
-.lightbar{height:2px;border-radius:2px;position:relative;overflow:hidden;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25) 12%,rgba(255,255,255,.25) 88%,transparent)}
+.lightbar{height:2px;margin-top:16px;border-radius:2px;position:relative;overflow:hidden;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25) 12%,rgba(255,255,255,.25) 88%,transparent)}
 .lightbar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,#fff 50%,transparent 100%);transform:translateX(-100%);animation:run 4.5s cubic-bezier(.6,0,.2,1) infinite}
 @keyframes run{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
-
-.banner{
-  display:flex;gap:12px;align-items:flex-start;border:1px dashed var(--hair-strong);border-radius:4px;
-  padding:12px 14px;font-size:13px;color:var(--grey);
-}
+.banner{display:flex;gap:12px;align-items:flex-start;border:1px dashed var(--hair-strong);border-radius:4px;padding:12px 14px;font-size:13px;color:var(--grey)}
 .banner b{color:var(--white);font-weight:600}
 .banner .tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--white);color:var(--white);padding:2px 7px;border-radius:3px;flex:none;margin-top:1px}
 
-/* ---------- Controls ---------- */
-.controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.tabs{display:flex;gap:0;border:1px solid var(--hair-strong);border-radius:999px;padding:3px}
-.tab{
-  appearance:none;border:0;background:transparent;color:var(--white);cursor:pointer;
-  font:600 12px var(--f-display);font-stretch:118%;letter-spacing:.14em;text-transform:uppercase;
-  padding:10px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;transition:background .2s,color .2s;
-}
-.tab .c{font-family:var(--f-mono);font-size:11px;letter-spacing:0;color:var(--grey)}
+/* Tabs */
+.rail{overflow-x:auto;scrollbar-width:none;margin-inline:-2px}
+.rail::-webkit-scrollbar{display:none}
+.tabs{display:inline-flex;gap:2px;border:1px solid var(--hair-strong);border-radius:999px;padding:3px;white-space:nowrap}
+.tab{appearance:none;border:0;background:transparent;color:var(--white);cursor:pointer;
+  font:600 11.5px var(--f-display);font-stretch:118%;letter-spacing:.12em;text-transform:uppercase;
+  padding:9px 14px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;transition:background .2s,color .2s}
+.tab .c{font-family:var(--f-mono);font-size:10.5px;letter-spacing:0;color:var(--grey)}
 .tab[aria-selected="true"]{background:var(--white);color:var(--black)}
 .tab[aria-selected="true"] .c{color:var(--dim)}
-.range{display:flex;gap:6px}
-.rbtn{
-  appearance:none;cursor:pointer;background:transparent;color:var(--grey);border:1px solid var(--hair);
-  font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-radius:999px;
-}
-.rbtn[aria-pressed="true"]{color:var(--white);border-color:var(--white)}
 
-.sec-title{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);margin:0 0 14px;display:flex;align-items:center;gap:12px}
+/* Criteria */
+.criteria{border:1px solid var(--hair);border-radius:6px;background:var(--panel)}
+.crit-head{display:flex;align-items:center;gap:10px;padding:10px 12px;flex-wrap:wrap}
+.crit-toggle{appearance:none;cursor:pointer;background:transparent;border:1px solid var(--white);color:var(--white);border-radius:999px;
+  padding:8px 14px;font:600 11px var(--f-display);font-stretch:118%;letter-spacing:.14em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center}
+.crit-toggle svg{width:12px;height:12px;transition:transform .2s}
+.crit-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+.crit-sum{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.pill{font-family:var(--f-mono);font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid var(--hair-strong);color:var(--white);white-space:nowrap}
+.pill.soft{color:var(--grey);border-color:var(--hair)}
+.linkbtn{appearance:none;background:none;border:0;color:var(--grey);font:500 11px var(--f-mono);letter-spacing:.06em;text-decoration:underline;cursor:pointer;padding:4px}
+.crit-body{border-top:1px solid var(--hair);padding:14px 12px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 22px}
+.cgroup{display:flex;flex-direction:column;gap:8px;min-width:0}
+.cgroup.wide{grid-column:1/-1}
+.clabel{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--grey)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{appearance:none;font:500 11.5px var(--f-display);font-stretch:112%;letter-spacing:.06em;color:var(--white);background:transparent;
+  border:1px solid var(--hair-strong);padding:7px 12px;border-radius:999px;cursor:pointer}
+.chip .c{font-family:var(--f-mono);color:var(--grey);margin-left:5px;font-size:10.5px}
+.chip[aria-pressed="true"]{background:var(--white);color:var(--black);border-color:var(--white)}
+.chip[aria-pressed="true"] .c{color:var(--dim)}
+.inrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+.field input,.field select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--hair-strong);color:var(--white);
+  font:300 18px var(--f-display);font-stretch:112%;padding:4px 0 6px;border-radius:0;font-variant-numeric:tabular-nums}
+.field select{font-size:16px;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--grey) 50%),linear-gradient(135deg,var(--grey) 50%,transparent 50%);
+  background-position:calc(100% - 10px) 55%,calc(100% - 5px) 55%;background-size:5px 5px;background-repeat:no-repeat;padding-right:18px}
+.field select option{background:var(--panel);color:var(--white)}
+.field input:focus,.field select:focus{outline:none;border-bottom-color:var(--white)}
+.field input::placeholder{color:#4a4a4c}
+.seg{display:inline-flex;border:1px solid var(--hair-strong);border-radius:999px;padding:2px;flex-wrap:wrap}
+.seg button{appearance:none;border:0;background:transparent;color:var(--grey);font:500 11px var(--f-display);font-stretch:112%;letter-spacing:.06em;padding:7px 11px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--white);color:var(--black)}
+.hint{font-size:12px;color:var(--grey);margin:0}
+
+/* Section */
+.view{display:flex;flex-direction:column;gap:28px}
+.vhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.vhead p{margin:0;max-width:70ch;color:var(--grey);font-size:13px}
+.sec-title{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);margin:0 0 12px;display:flex;align-items:center;gap:12px}
 .sec-title::after{content:"";flex:1;height:1px;background:var(--hair)}
-.view{display:flex;flex-direction:column;gap:30px}
+.range{display:flex;gap:6px}
+.rbtn{appearance:none;cursor:pointer;background:transparent;color:var(--grey);border:1px solid var(--hair);font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border-radius:999px}
+.rbtn[aria-pressed="true"]{color:var(--white);border-color:var(--white)}
+.sortsel{display:flex;align-items:center;gap:8px}
+.sortsel select{background:transparent;color:var(--white);border:1px solid var(--hair-strong);border-radius:999px;padding:7px 12px;font:500 12px var(--f-display)}
+.sortsel select option{background:var(--panel)}
 
-/* ---------- KPI strip ---------- */
-.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--hair-strong);border-bottom:1px solid var(--hair)}
-.kpi{padding:18px 16px 16px;border-left:1px solid var(--hair);min-width:0}
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--hair-strong);border-bottom:1px solid var(--hair)}
+.kpi{padding:16px 14px 14px;border-left:1px solid var(--hair);min-width:0}
 .kpi:first-child{border-left:0;padding-left:2px}
-.kpi .l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
-.kpi .v{font-weight:300;font-stretch:118%;font-size:clamp(30px,5.4vw,46px);line-height:1.1;margin-top:6px;letter-spacing:-.01em}
+.kpi .l{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+.kpi .v{font-weight:300;font-stretch:118%;font-size:clamp(26px,4.2vw,40px);line-height:1.1;margin-top:6px;letter-spacing:-.01em;white-space:nowrap}
 .kpi .v small{font-size:.42em;font-weight:500;color:var(--grey);letter-spacing:.04em;margin-left:4px}
-.kpi .s{font-size:12px;color:var(--grey);margin-top:4px}
+.kpi .s{font-size:12px;color:var(--grey);margin-top:3px}
 .kpi.up .v{color:var(--up)}
-.sign{font-weight:200}
 
-/* ---------- Ledger ---------- */
-.ledger-wrap{overflow-x:auto}
-table.ledger{width:100%;border-collapse:collapse;min-width:560px}
-.ledger th{font-family:var(--f-mono);font-weight:400;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);text-align:right;padding:0 10px 10px;border-bottom:1px solid var(--hair-strong)}
-.ledger th:first-child,.ledger td:first-child{text-align:left;padding-left:2px}
-.ledger td{padding:15px 10px;border-bottom:1px solid var(--hair);text-align:right;font-variant-numeric:tabular-nums;font-size:15px}
-.ledger td.p{font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase;font-size:14px;white-space:nowrap}
-.ledger td.big{font-size:20px;font-weight:300;font-stretch:112%}
-.ledger tr.total td{border-bottom:0;border-top:1px solid var(--hair-strong);color:var(--white);font-weight:600}
-.ledger .plus{color:var(--up)}
-.ledger .minus{color:var(--grey)}
-.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;padding:3px 8px;border-radius:3px;border:1px solid var(--hair-strong);white-space:nowrap}
-.chip i{width:5px;height:5px;border-radius:50%;background:var(--white)}
-.chip.off{border-color:rgba(232,201,138,.5);color:var(--warn)}
-.chip.off i{background:var(--warn)}
+/* Tables */
+.tw{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;min-width:620px}
+.t th{font-family:var(--f-mono);font-weight:400;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);text-align:right;padding:0 10px 9px;border-bottom:1px solid var(--hair-strong);white-space:nowrap}
+.t th:first-child,.t td:first-child{text-align:left;padding-left:2px}
+.t td{padding:12px 10px;border-bottom:1px solid var(--hair);text-align:right;font-variant-numeric:tabular-nums;font-size:14px;white-space:nowrap}
+.t td.p{font-weight:600;font-stretch:112%;letter-spacing:.04em;white-space:normal}
+.t td.txt{white-space:normal;text-align:left;color:var(--grey)}
+.t tr.click{cursor:pointer}
+.t tr.click:hover td{background:rgba(255,255,255,.03)}
+.t tr.total td{border-bottom:0;border-top:1px solid var(--hair-strong);font-weight:600}
+.t .plus{color:var(--up)} .t .muted{color:var(--grey)}
+.st{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;padding:3px 8px;border-radius:3px;border:1px solid var(--hair-strong);white-space:nowrap}
+.st i{width:5px;height:5px;border-radius:50%;background:var(--white)}
+.st.off{border-color:rgba(232,201,138,.5);color:var(--warn)} .st.off i{background:var(--warn)}
+.st.good{border-color:rgba(159,220,184,.5);color:var(--good)} .st.good i{background:var(--good)}
+.st.bad{border-color:rgba(240,160,140,.5);color:var(--bad)} .st.bad i{background:var(--bad)}
 
-/* ---------- Charts ---------- */
-.charts{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+/* Charts */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 .chart{min-width:0;position:relative}
-.chart h3{margin:0 0 4px;font-weight:600;font-stretch:112%;font-size:14px;letter-spacing:.04em}
+.chart h3{margin:0 0 3px;font-weight:600;font-stretch:112%;font-size:14px;letter-spacing:.03em}
 .chart .sub{font-size:12px;color:var(--grey);margin-bottom:10px;display:flex;gap:14px;flex-wrap:wrap}
 .key{display:inline-flex;align-items:center;gap:6px}
-.key i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.key i{width:9px;height:9px;border-radius:2px;display:inline-block}
 .chart svg{width:100%;height:auto;display:block;overflow:visible}
-.tip{
-  position:absolute;pointer-events:none;background:var(--white);color:var(--black);border-radius:4px;
-  padding:7px 10px;font-size:12px;line-height:1.35;white-space:nowrap;transform:translate(-50%,-100%);
-  box-shadow:0 10px 20px -10px #000;z-index:5;
-}
-.tip b{font-weight:700}
+.tip{position:absolute;pointer-events:none;background:var(--white);color:var(--black);border-radius:4px;padding:7px 10px;font-size:12px;line-height:1.35;
+  max-width:260px;white-space:normal;transform:translate(-50%,-100%);box-shadow:0 10px 20px -10px #000;z-index:5}
 
-/* ---------- Pulse ---------- */
-.pulse{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.pcard{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--hair);border-radius:4px;background:var(--panel);color:var(--white);text-decoration:none;min-width:0;transition:border-color .2s}
+/* Pulse */
+.pulse{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.pcard{display:flex;flex-direction:column;gap:5px;padding:14px;border:1px solid var(--hair);border-radius:4px;background:var(--panel);text-decoration:none;min-width:0;transition:border-color .2s}
 a.pcard:hover{border-color:var(--white)}
-.pcard .l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
-.pcard .v{font-weight:300;font-stretch:118%;font-size:26px;line-height:1.15}
-.pcard .t{font-size:13px;color:var(--grey);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard .l{font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+.pcard .v{font-weight:300;font-stretch:118%;font-size:24px;line-height:1.15}
+.pcard .t2{font-size:12.5px;color:var(--grey);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ---------- Cards ---------- */
-.filterbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.fchip{
-  font:500 11.5px var(--f-display);font-stretch:112%;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--white);background:transparent;border:1px solid var(--hair-strong);padding:8px 13px;border-radius:999px;cursor:pointer;
-}
-.fchip .c{font-family:var(--f-mono);color:var(--grey);margin-left:6px;letter-spacing:0}
-.fchip[aria-pressed="true"]{background:var(--white);color:var(--black);border-color:var(--white)}
-.fchip[aria-pressed="true"] .c{color:var(--dim)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.car{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:6px;background:var(--panel);overflow:hidden;min-width:0;transition:border-color .2s}
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.car{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:6px;background:var(--panel);overflow:hidden;min-width:0}
 .car:hover{border-color:var(--hair-strong)}
-.shot{position:relative;aspect-ratio:16/10;max-width:100%;background:linear-gradient(180deg,#141416,#0a0a0b);overflow:hidden}
-.shot img{width:100%;height:100%;object-fit:cover;display:block}
+.shot{position:relative;aspect-ratio:16/9;max-width:100%;background:linear-gradient(180deg,#141416,#0a0a0b);overflow:hidden}
+.shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .shot .ph{position:absolute;inset:0;display:grid;place-items:center}
-.shot .ph svg{width:62%;opacity:.5}
+.shot .ph svg{width:60%;opacity:.45}
 .car.sold .shot img{filter:grayscale(1) brightness(.7)}
-.car.sold .shot::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(255,255,255,.035) 10px 11px)}
-.shot .ptag{position:absolute;left:10px;top:10px;z-index:2;font:600 10.5px var(--f-display);font-stretch:118%;letter-spacing:.12em;text-transform:uppercase;background:rgba(5,5,5,.78);backdrop-filter:blur(6px);border:1px solid var(--hair-strong);padding:5px 9px;border-radius:999px}
-.shot .when{position:absolute;right:10px;top:10px;z-index:2;font-family:var(--f-mono);font-size:10.5px;background:var(--white);color:var(--black);padding:4px 8px;border-radius:999px}
-.car.sold .shot .when{background:rgba(5,5,5,.78);color:var(--white);border:1px solid var(--hair-strong)}
-.cbody{display:flex;flex-direction:column;gap:10px;padding:14px 16px 16px;flex:1}
-.ctitle{font-weight:600;font-stretch:108%;font-size:15px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.shot .ptag{position:absolute;left:10px;top:10px;z-index:2;font:600 10px var(--f-display);font-stretch:118%;letter-spacing:.12em;text-transform:uppercase;background:rgba(5,5,5,.8);backdrop-filter:blur(6px);border:1px solid var(--hair-strong);padding:4px 9px;border-radius:999px}
+.shot .when{position:absolute;right:10px;top:10px;z-index:2;font-family:var(--f-mono);font-size:10.5px;background:var(--white);color:var(--black);padding:3px 8px;border-radius:999px}
+.car.sold .shot .when{background:rgba(5,5,5,.8);color:var(--white);border:1px solid var(--hair-strong)}
+.cbody{display:flex;flex-direction:column;gap:9px;padding:13px 15px 15px;flex:1}
+.ctitle{font-weight:600;font-stretch:106%;font-size:14.5px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.cmodel{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
 .cprice{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.cprice .pr{font-weight:300;font-stretch:118%;font-size:26px;line-height:1}
-.cprice .meta{font-family:var(--f-mono);font-size:12px;color:var(--grey)}
-.snip{font-size:12.5px;color:var(--grey);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.badges{display:flex;flex-wrap:wrap;gap:6px}
-.badge{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;padding:3px 8px;border-radius:3px;border:1px solid var(--hair-strong);color:var(--white)}
+.cprice .pr{font-weight:300;font-stretch:118%;font-size:25px;line-height:1}
+.rating{font-family:var(--f-mono);font-size:11px;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.r-top,.r-good{background:var(--good-bg);color:var(--good)}
+.r-fair{background:rgba(255,255,255,.06);color:var(--white)}
+.r-high{background:var(--warn-bg);color:var(--warn)}
+.r-over{background:var(--bad-bg);color:var(--bad)}
+.r-na{background:transparent;color:var(--grey);border:1px solid var(--hair)}
+.fair{font-size:12px;color:var(--grey)}
+.snip{font-size:12.5px;color:var(--grey);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.badges{display:flex;flex-wrap:wrap;gap:5px}
+.badge{font-family:var(--f-mono);font-size:10.5px;padding:3px 7px;border-radius:3px;border:1px solid var(--hair-strong);color:var(--white)}
 .badge.soft{border-color:var(--hair);color:var(--grey)}
-.badge.drop{border-color:var(--up);color:var(--up)}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--hair);padding-top:10px}
+.badge.good{border-color:rgba(159,220,184,.55);color:var(--good)}
+.badge.warn{border-color:rgba(232,201,138,.55);color:var(--warn)}
+.badge.bad{border-color:rgba(240,160,140,.55);color:var(--bad)}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;border-top:1px solid var(--hair);padding-top:9px}
 .facts div{min-width:0}
-.facts .l{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
-.facts .v{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.go{
-  margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;
-  color:var(--black);background:var(--white);border:1px solid var(--white);border-radius:999px;padding:11px 16px;
-  font:600 11.5px var(--f-display);font-stretch:118%;letter-spacing:.14em;text-transform:uppercase;transition:background .2s;
-}
+.facts .l{font-family:var(--f-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--grey)}
+.facts .v{font-size:13px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.go{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;color:var(--black);background:var(--white);border:1px solid var(--white);
+  border-radius:999px;padding:10px 16px;font:600 11px var(--f-display);font-stretch:118%;letter-spacing:.14em;text-transform:uppercase}
 .go:hover{background:#dcdcd9}
 .go.ghost{background:transparent;color:var(--white)}
 .go.ghost:hover{background:var(--white);color:var(--black)}
-.go svg{width:14px;height:14px}
-.note{font-size:11.5px;color:var(--dim);text-align:center;margin:-4px 0 0}
-.empty{border:1px dashed var(--hair-strong);border-radius:6px;padding:34px 18px;text-align:center;color:var(--grey)}
-.empty b{display:block;color:var(--white);font-weight:600;font-stretch:112%;margin-bottom:4px}
-.explain{font-size:12.5px;color:var(--grey);margin:0;max-width:70ch}
+.go svg{width:13px;height:13px}
+.note{font-size:11px;color:var(--dim);text-align:center;margin:-3px 0 0}
+.more{display:flex;justify-content:center}
+.empty{border:1px dashed var(--hair-strong);border-radius:6px;padding:30px 18px;text-align:center;color:var(--grey);grid-column:1/-1}
+.empty b{display:block;color:var(--white);font-weight:600;margin-bottom:4px}
+.count-line{font-family:var(--f-mono);font-size:11.5px;color:var(--grey)}
+
+/* Analyse */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.two > div{min-width:0}
+.bar{display:block;height:6px;border-radius:3px;background:var(--white);opacity:.85}
+.barcell{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.barcell .track{width:80px;height:6px;border-radius:3px;background:var(--hair);overflow:hidden;display:inline-block}
+.barcell .track i{display:block;height:100%;background:var(--white)}
+.callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+
+/* Preis-Check */
+.pc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:start}
+.pcform{display:flex;flex-direction:column;gap:16px;border:1px solid var(--hair);border-radius:6px;padding:16px;background:var(--panel)}
+.eqgrid{display:flex;flex-wrap:wrap;gap:6px}
+.result{border:1px solid var(--white);border-radius:6px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.result .big{font-weight:300;font-stretch:118%;font-size:clamp(34px,6vw,52px);line-height:1}
+.scale{position:relative;height:34px;margin-top:6px}
+.scale .band{position:absolute;top:12px;height:8px;border-radius:4px}
+.scale .mk{position:absolute;top:4px;width:2px;height:24px;background:var(--white)}
+.scale .lab{position:absolute;top:30px;font-family:var(--f-mono);font-size:10px;color:var(--grey);transform:translateX(-50%);white-space:nowrap}
 
 :focus-visible{outline:1px solid var(--white);outline-offset:3px}
 footer{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center}
 
-@media (max-width:760px){
-  .kpis{grid-template-columns:1fr 1fr}
-  .kpi:nth-child(3){border-left:0;padding-left:2px}
-  .kpi:nth-child(n+3){border-top:1px solid var(--hair)}
-  .charts{grid-template-columns:1fr}
-  .pulse{grid-template-columns:1fr}
-  .controls{flex-direction:column;align-items:stretch}
-  .tabs{justify-content:space-between}
-  .tab{flex:1;justify-content:center;padding:10px 8px;letter-spacing:.08em}
-  .range{justify-content:center}
-  .status{text-align:left}
+@media (max-width:860px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{border-top:1px solid var(--hair)}
+  .kpi:nth-child(odd){border-left:0;padding-left:2px}
+  .kpi:nth-child(-n+2){border-top:0}
+  .kpi:last-child{grid-column:1/-1}
+  .charts,.two,.pc{grid-template-columns:1fr}
+  .pulse{grid-template-columns:1fr 1fr}
+  .callouts{grid-template-columns:1fr}
+  .crit-body{grid-template-columns:1fr}
 }
-@media (max-width:380px){ .tab .c{display:none} }
+@media (max-width:480px){
+  .pulse{grid-template-columns:1fr}
+  .inrow{grid-template-columns:1fr 1fr}
+  .inrow .field:first-child{grid-column:1/-1}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards{grid-template-columns:1fr}
+}
 @media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -220,10 +257,7 @@ footer{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-tran
     <div class="top">
       <div class="mark">
         <div class="lamps" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-        <div>
-          <h1><b>Taycan</b> Radar</h1>
-          <div class="eyebrow">Markt · Approved Edition</div>
-        </div>
+        <div><h1><b>Taycan</b> Radar</h1><div class="eyebrow">Markt · Approved Edition</div></div>
       </div>
       <div class="status" id="status"><span class="led"></span><span id="statusText">Lade Daten …</span></div>
     </div>
@@ -232,447 +266,814 @@ footer{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-tran
 
   <div class="banner" id="sampleBanner" hidden>
     <span class="tag">Beispiel</span>
-    <span><b>Das sind Beispieldaten.</b> So sieht dein Dashboard aus, sobald der Bot läuft. Deine echten Autos erscheinen in der Version auf deiner GitHub-Seite. Die Links führen hier zur jeweiligen Suche, nicht zu echten Inseraten.</span>
+    <span><b>Das sind Beispieldaten.</b> So sieht die App mit echten Daten aus. Deine echten Autos siehst du auf deiner GitHub-Seite. Die Links führen hier nur zur jeweiligen Suche.</span>
   </div>
 
-  <div class="controls">
-    <div class="tabs" role="tablist" aria-label="Ansicht">
-      <button class="tab" role="tab" id="tab-uebersicht" data-view="uebersicht" aria-selected="true">Übersicht</button>
-      <button class="tab" role="tab" id="tab-neu" data-view="neu" aria-selected="false">Neu <span class="c" id="cNew">0</span></button>
-      <button class="tab" role="tab" id="tab-verkauft" data-view="verkauft" aria-selected="false">Verkauft <span class="c" id="cSold">0</span></button>
+  <nav class="rail" aria-label="Bereiche">
+    <div class="tabs" role="tablist" id="tabs"></div>
+  </nav>
+
+  <section class="criteria" id="criteria" aria-label="Kriterien">
+    <div class="crit-head">
+      <button class="crit-toggle" id="critToggle" type="button" aria-expanded="false" aria-controls="critBody">Kriterien
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="crit-sum" id="critSum"></div>
+      <button class="linkbtn" id="critReset" type="button">Zurücksetzen</button>
     </div>
-    <div class="range" role="group" aria-label="Zeitraum">
-      <button class="rbtn" type="button" data-range="today" aria-pressed="true">Heute</button>
-      <button class="rbtn" type="button" data-range="7" aria-pressed="false">7 Tage</button>
-      <button class="rbtn" type="button" data-range="30" aria-pressed="false">30 Tage</button>
+    <div class="crit-body" id="critBody" hidden>
+      <div class="cgroup wide"><span class="clabel">Modell</span><div class="chips" id="fModel"></div></div>
+      <div class="cgroup"><span class="clabel">Karosserie</span><div class="chips" id="fBody"></div></div>
+      <div class="cgroup"><span class="clabel">Plattform</span><div class="chips" id="fPlat"></div></div>
+      <div class="cgroup wide"><div class="inrow">
+        <div class="field"><label for="fMaxPrice">Preis bis €</label><input id="fMaxPrice" inputmode="numeric" placeholder="egal"></div>
+        <div class="field"><label for="fMinYear">EZ ab</label><input id="fMinYear" inputmode="numeric" placeholder="egal"></div>
+        <div class="field"><label for="fMaxKm">km bis</label><input id="fMaxKm" inputmode="numeric" placeholder="egal"></div>
+      </div></div>
+      <div class="cgroup"><span class="clabel">Porsche Approved</span>
+        <div class="seg" id="fAppr" role="group" aria-label="Approved"></div>
+        <p class="hint">„Wahrscheinlich“ = Porsche Zentrum oder Porsche-Garantie erwähnt, aber nicht das Wort „Approved“.</p></div>
+      <div class="cgroup"><span class="clabel">MwSt. ausweisbar</span>
+        <div class="seg" id="fVat" role="group" aria-label="MwSt."></div>
+        <p class="hint">„Nicht ausgeschlossen“ zeigt auch Inserate ohne Angabe.</p></div>
+      <div class="cgroup"><span class="clabel">Verkäufer</span><div class="seg" id="fSeller" role="group" aria-label="Verkäufer"></div></div>
+      <div class="cgroup"><span class="clabel">Sonstiges</span><div class="chips">
+        <button class="chip" type="button" id="fNoDamage" aria-pressed="false">Ohne Vorschaden</button>
+        <button class="chip" type="button" id="fHasPrice" aria-pressed="false">Nur mit Preis</button></div></div>
     </div>
-  </div>
+  </section>
 
   <!-- ÜBERSICHT -->
-  <section class="view" id="view-uebersicht" role="tabpanel" aria-labelledby="tab-uebersicht">
+  <section class="view" id="v-uebersicht" hidden>
+    <div class="vhead"><p>Alle Zahlen gelten für deine Kriterien. Tippe auf eine Plattform, um ihre Autos zu sehen.</p>
+      <div class="range" role="group" aria-label="Zeitraum"></div></div>
     <div class="kpis" id="kpis"></div>
-
-    <div>
-      <p class="sec-title">Plattformen</p>
-      <div class="ledger-wrap"><table class="ledger" id="ledger"></table></div>
-    </div>
-
-    <div>
-      <p class="sec-title">Verlauf · 14 Tage</p>
+    <div><p class="sec-title">Plattformen</p><div class="tw"><table class="t" id="ledger"></table></div></div>
+    <div><p class="sec-title">Verlauf · 14 Tage</p>
       <div class="charts">
-        <div class="chart" id="chartStock">
-          <h3>Inserate im Markt</h3>
-          <div class="sub">Alle Plattformen zusammen, Stand je Tag</div>
-          <div class="plot"></div>
-        </div>
-        <div class="chart" id="chartFlow">
-          <h3>Zugänge und Abgänge</h3>
-          <div class="sub"><span class="key"><i style="background:var(--up)"></i>Neu</span><span class="key"><i style="background:var(--down)"></i>Verkauft / offline</span></div>
-          <div class="plot"></div>
-        </div>
-      </div>
-    </div>
+        <div class="chart" id="chStock"><h3>Inserate im Markt</h3><div class="sub">Alle Plattformen, Stand je Tag (ohne Kriterien)</div><div class="plot"></div></div>
+        <div class="chart" id="chFlow"><h3>Zugänge und Abgänge</h3><div class="sub"><span class="key"><i style="background:var(--up)"></i>Neu</span><span class="key"><i style="background:var(--down)"></i>Verkauft / offline</span></div><div class="plot"></div></div>
+      </div></div>
+    <div><p class="sec-title">Marktpuls</p><div class="pulse" id="pulse"></div></div>
+  </section>
 
-    <div>
-      <p class="sec-title">Marktpuls</p>
-      <div class="pulse" id="pulse"></div>
-    </div>
+  <!-- MARKT -->
+  <section class="view" id="v-markt" hidden>
+    <div class="vhead"><p>Alle Taycans, die gerade inseriert sind. Die Bewertung vergleicht den Preis mit ähnlichen Autos (Modell, Baujahr, km, Ausstattung).</p>
+      <div class="sortsel"><label class="clabel" for="sortMarkt">Sortieren</label>
+        <select id="sortMarkt"><option value="deal">Bester Deal</option><option value="new">Neueste</option><option value="pa">Preis aufsteigend</option><option value="pd">Preis absteigend</option><option value="km">Wenigste km</option><option value="days">Längste Standzeit</option></select></div></div>
+    <div class="count-line" id="cntMarkt"></div>
+    <div class="cards" id="lMarkt"></div>
+    <div class="more" id="moreMarkt"></div>
   </section>
 
   <!-- NEU -->
-  <section class="view" id="view-neu" role="tabpanel" aria-labelledby="tab-neu" hidden>
-    <div class="filterbar" id="fNew"></div>
-    <div class="cards" id="listNew"></div>
+  <section class="view" id="v-neu" hidden>
+    <div class="vhead"><p>Autos, die seit Start des Radars neu inseriert wurden.</p><div class="range" role="group" aria-label="Zeitraum"></div></div>
+    <div class="cards" id="lNeu"></div><div class="more" id="moreNeu"></div>
   </section>
 
   <!-- VERKAUFT -->
-  <section class="view" id="view-verkauft" role="tabpanel" aria-labelledby="tab-verkauft" hidden>
-    <p class="explain">Ein Auto landet hier, wenn sein Inserat bei drei Prüfungen in Folge nicht mehr auftaucht. Meist heißt das verkauft oder reserviert. Manchmal hat der Verkäufer es nur gelöscht oder neu eingestellt.</p>
-    <div class="filterbar" id="fSold"></div>
-    <div class="cards" id="listSold"></div>
+  <section class="view" id="v-verkauft" hidden>
+    <div class="vhead"><p>Inserate, die verschwunden sind: zweimal in Folge nicht mehr in der Suche gefunden oder die Seite meldet „gelöscht“. Meist heißt das verkauft oder reserviert.</p><div class="range" role="group" aria-label="Zeitraum"></div></div>
+    <div class="cards" id="lVerkauft"></div><div class="more" id="moreVerkauft"></div>
   </section>
 
-  <footer id="foot">Taycan Radar</footer>
+  <!-- LADENHÜTER -->
+  <section class="view" id="v-ladenhueter" hidden>
+    <div class="vhead"><p>Autos, die schon lange inseriert sind. Liegt der Preis über dem Marktwert, gibt es meist Verhandlungsspielraum.</p>
+      <div class="range" role="group" aria-label="Mindest-Standzeit" id="lhRange">
+        <button class="rbtn" type="button" data-lh="21">ab 21 Tagen</button><button class="rbtn" type="button" data-lh="45">ab 45 Tagen</button><button class="rbtn" type="button" data-lh="90">ab 90 Tagen</button></div></div>
+    <div class="count-line" id="cntLh"></div>
+    <div class="cards" id="lLh"></div><div class="more" id="moreLh"></div>
+  </section>
+
+  <!-- ANALYSE -->
+  <section class="view" id="v-analyse" hidden>
+    <div class="callouts" id="callouts"></div>
+    <div><p class="sec-title">Modelle im Vergleich</p><div class="tw"><table class="t" id="tModels"></table></div>
+      <p class="hint" style="margin-top:8px">Verkaufstempo = Tage vom ersten Erscheinen bis das Inserat weg war. Nur Autos, die der Radar von Anfang an gesehen hat.</p></div>
+    <div class="chart" id="chScatter"><h3>Preis und Laufleistung</h3>
+      <div class="sub"><span class="key"><i style="background:var(--good)"></i>Guter Preis</span><span class="key"><i style="background:var(--white)"></i>Fair</span><span class="key"><i style="background:var(--warn)"></i>Erhöht</span><span class="key"><i style="background:var(--bad)"></i>Zu teuer</span></div>
+      <div class="plot"></div></div>
+    <div class="two">
+      <div><p class="sec-title">Preis nach Erstzulassung</p><div class="tw"><table class="t" id="tYears"></table></div></div>
+      <div><p class="sec-title">Was Ausstattung wert ist</p><div class="tw"><table class="t" id="tEquip"></table></div>
+        <p class="hint" id="equipHint" style="margin-top:8px"></p></div>
+    </div>
+    <div><p class="sec-title">So liest du einen Preis</p><div class="tw"><table class="t" id="tGuide"></table></div></div>
+  </section>
+
+  <!-- PREIS-CHECK -->
+  <section class="view" id="v-preischeck" hidden>
+    <div class="vhead"><p>Was ist ein Taycan mit dieser Ausstattung wert? Berechnet aus allen Autos, die der Radar gerade sieht.</p></div>
+    <div class="pc">
+      <form class="pcform" id="pcForm" autocomplete="off">
+        <div class="inrow">
+          <div class="field"><label for="pcModel">Modell</label><select id="pcModel"></select></div>
+          <div class="field"><label for="pcBody">Karosserie</label><select id="pcBody"><option>Limousine</option><option>Sport Turismo</option><option>Cross Turismo</option></select></div>
+          <div class="field"><label for="pcYear">EZ</label><select id="pcYear"></select></div>
+        </div>
+        <div class="inrow">
+          <div class="field"><label for="pcKm">Kilometer</label><input id="pcKm" inputmode="numeric" value="40000"></div>
+          <div class="field"><label for="pcPrice">Angebotspreis €</label><input id="pcPrice" inputmode="numeric" placeholder="optional"></div>
+          <div class="field"><label for="pcAppr">Approved</label><select id="pcAppr"><option value="1">ja</option><option value="0">nein</option></select></div>
+        </div>
+        <div class="cgroup"><span class="clabel">Ausstattung</span><div class="eqgrid" id="pcEquip"></div></div>
+      </form>
+      <div class="result" id="pcResult"></div>
+    </div>
+    <div><p class="sec-title">Vergleichbare Autos im Markt</p><div class="cards" id="pcSimilar"></div></div>
+  </section>
+
+  <!-- QUELLEN -->
+  <section class="view" id="v-quellen" hidden>
+    <div class="vhead"><p>Woher die Zahlen kommen und ob alles läuft.</p></div>
+    <div class="kpis" id="srcKpis"></div>
+    <div><p class="sec-title">Plattformen</p><div class="tw"><table class="t" id="tSrc"></table></div></div>
+    <div><p class="sec-title">Suchen im letzten Lauf</p><div class="tw"><table class="t" id="tSearch"></table></div></div>
+    <div><p class="sec-title">Aussortiert</p><p class="hint" style="margin-bottom:10px">Diese Inserate kamen in den Suchen vor, sind aber kein Taycan-Verkauf (z. B. Panamera, Gesuch, Vermietung). Prüf ruhig, ob etwas Falsches dabei ist.</p><div class="tw"><table class="t" id="tExcl"></table></div></div>
+  </section>
+
+  <footer>Taycan Radar · Angaben aus Inseraten, ohne Gewähr</footer>
 </div>
 
 <script>
 (function(){
-  const NAMES = {mobile:"mobile.de", autoscout:"AutoScout24", kleinanzeigen:"Kleinanzeigen", ebay:"eBay"};
-  const SEARCH = {
-    mobile:"https://suchen.mobile.de/fahrzeuge/search.html?isSearchRequest=true&s=Car&vc=Car&sb=doc&od=down&ms=20100%3B%3B%3BTaycan",
-    autoscout:"https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1",
-    kleinanzeigen:"https://www.kleinanzeigen.de/s-autos/porsche-taycan/k0c216",
-    ebay:"https://www.ebay.de/sch/9801/i.html?_nkw=porsche+taycan&_sop=10"
+"use strict";
+const NAMES = {mobile:"mobile.de", autoscout:"AutoScout24", kleinanzeigen:"Kleinanzeigen", ebay:"eBay", porsche:"Porsche Finder"};
+const SEARCH = {
+  mobile:"https://suchen.mobile.de/fahrzeuge/search.html?isSearchRequest=true&s=Car&vc=Car&sb=doc&od=down&ms=20100%3B%3B%3BTaycan",
+  autoscout:"https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1&atype=C&cy=D",
+  kleinanzeigen:"https://www.kleinanzeigen.de/s-autos/porsche-taycan/k0c216",
+  ebay:"https://www.ebay.de/sch/i.html?_nkw=porsche+taycan&_sacat=9801",
+  porsche:"https://finder.porsche.com/de/de-DE/search/taycan"
+};
+const VARIANTS = ["Basis","4","4S","GTS","Turbo","Turbo S","Turbo GT"];
+const BODIES = ["Limousine","Sport Turismo","Cross Turismo"];
+const EQUIP_DEFAULT = {perf_batt:"Performancebatterie Plus",pano:"Panoramadach",hal:"Hinterachslenkung",luft:"Luftfederung",bose:"Bose",burmester:"Burmester",
+  hud:"Head-up-Display",innodrive:"InnoDrive",matrix:"Matrix-LED",chrono:"Sport Chrono",beifahrer:"Beifahrerdisplay",massage:"Massage",belueftung:"Sitzbelüftung",
+  ahk:"Anhängerkupplung",lader22:"22-kW-Lader",waermepumpe:"Wärmepumpe",kamera360:"360°-Kamera",keramik:"Keramikbremse",sportdesign:"SportDesign",pdcc:"PDCC / Active Ride"};
+const TABS = [["uebersicht","Übersicht"],["markt","Markt"],["neu","Neu"],["verkauft","Verkauft"],["ladenhueter","Ladenhüter"],["analyse","Analyse"],["preischeck","Preis-Check"],["quellen","Quellen"]];
+const NO_CRITERIA = new Set(["preischeck","quellen"]);
+const CAR_SVG = '<svg viewBox="0 0 200 64" fill="none" stroke="#f5f5f3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 44c0-6 4-9 12-10l30-4c10-8 26-16 52-16 22 0 38 6 54 15 14 1 30 4 34 9 3 3 3 8 1 10l-4 1"/><path d="M8 44c-1 3 1 5 6 5h14M62 49h78M172 49h10"/><circle cx="45" cy="48" r="10"/><circle cx="157" cy="48" r="10"/><path d="M62 30c14-9 28-12 44-12l2 12zM114 18c14 0 26 4 38 11l-36 1z" stroke-width="1"/><path d="M178 34h12" stroke-width="2.2"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const DAY = 864e5, PAGE = 24;
+
+const store = {
+  get(k,d){ try{ const v = localStorage.getItem("trm3_"+k); return v===null? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem("trm3_"+k, JSON.stringify(v)); }catch(e){} }
+};
+const DEF_F = {models:[], bodies:[], plats:[], maxPrice:"", minYear:"", maxKm:"", appr:"alle", vat:"alle", seller:"alle", noDamage:false, hasPrice:false};
+const S = {
+  view: "uebersicht", range: store.get("range","7"), lh: store.get("lh","45"), sort: store.get("sort","deal"),
+  F: Object.assign({}, DEF_F, store.get("F", {})), shown: {}, data: null, status: null, sample: false, model: null,
+  pc: store.get("pc", {model:"4S", body:"Limousine", year:"2021", km:"40000", price:"", appr:"1", equip:["pano","bose"]})
+};
+const h = location.hash.replace("#","");
+if(TABS.some(t=>t[0]===h)) S.view = h;
+
+// ---------- helpers
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur = v => (v || v===0) ? Math.round(v).toLocaleString("de-DE") + " €" : "Preis k. A.";
+const keur = v => (v || v===0) ? (Math.round(v/100)/10).toLocaleString("de-DE",{minimumFractionDigits:1, maximumFractionDigits:1}) + " T€" : "–";
+const kmf = v => (v || v===0) ? Math.round(v).toLocaleString("de-DE") + " km" : "–";
+const t = s => new Date(s).getTime();
+const num = v => { const d = String(v ?? "").replace(/\D/g,""); return d ? parseInt(d,10) : null; };
+function dayKey(ms){ const d = new Date(ms); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function rangeStart(){ if(S.range==="today"){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(); } return Date.now() - parseInt(S.range,10)*DAY; }
+const rangeLabel = () => S.range==="today" ? "heute" : `${S.range} Tage`;
+function ago(ms){ const m = Math.round((Date.now()-ms)/6e4); if(m<1) return "gerade eben"; if(m<60) return `vor ${m} Min`; const hh=Math.round(m/60); if(hh<24) return `vor ${hh} Std`; const d=Math.round(hh/24); return d===1?"gestern":`vor ${d} Tagen`; }
+const dts = ms => new Date(ms).toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"2-digit"});
+function quant(a,q){ if(!a.length) return null; const s=[...a].sort((x,y)=>x-y); const p=(s.length-1)*q, lo=Math.floor(p), hi=Math.ceil(p); return s[lo]+(s[hi]-s[lo])*(p-lo); }
+const median = a => quant(a,.5);
+const mean = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+const days = r => Math.max(0, ((r.removed ? t(r.removed) : Date.now()) - t(r.first_seen))/DAY);
+const daysTxt = r => (r.baseline ? "≥ " : "") + Math.round(days(r)) + " T";
+const label = r => (r.model||"?") + (r.body && r.body!=="Limousine" ? " " + (r.body==="Cross Turismo"?"CT":"ST") : "");
+const fullLabel = r => "Taycan " + (r.model && r.model!=="Basis" ? r.model+" " : "") + (r.body||"");
+const priceOk = r => r.price && !r.price_odd;
+function priceDrop(r){ const p=(r.prices||[]).map(x=>x[1]).filter(Boolean); return p.length<2 ? 0 : Math.max(...p) - p[p.length-1]; }
+const EQ = () => (S.data && S.data.equipment) || EQUIP_DEFAULT;
+
+// ---------- criteria
+function passes(r){
+  const F = S.F;
+  if(F.models.length && !F.models.includes(r.model||"Basis")) return false;
+  if(F.bodies.length && !F.bodies.includes(r.body||"Limousine")) return false;
+  if(F.plats.length && !F.plats.includes(r.platform)) return false;
+  const mp=num(F.maxPrice), my=num(F.minYear), mk=num(F.maxKm);
+  if(mp && r.price && r.price > mp) return false;
+  if(my && r.year && r.year < my) return false;
+  if(mk && r.km && r.km > mk) return false;
+  const a = r.approved || "unbekannt";
+  if(F.appr==="nicht_nein" && (a==="nein"||a==="abgelaufen")) return false;
+  if(F.appr==="ja_wahr" && !(a==="ja"||a==="wahrscheinlich")) return false;
+  if(F.appr==="ja" && a!=="ja") return false;
+  const v = r.vat || "unbekannt";
+  if(F.vat==="nicht_nein" && v==="nein") return false;
+  if(F.vat==="ja_wahr" && !(v==="ja"||v==="wahrscheinlich")) return false;
+  if(F.vat==="ja" && v!=="ja") return false;
+  if(F.seller==="händler" && r.seller!=="händler") return false;
+  if(F.seller==="privat" && r.seller!=="privat") return false;
+  if(F.noDamage && r.damage==="vorschaden") return false;
+  if(F.hasPrice && !priceOk(r)) return false;
+  return true;
+}
+function saveF(){ store.set("F", S.F); }
+
+// ---------- Marktwert-Modell (Regression auf log-Preis)
+function solve(A, b){
+  const n = b.length; const M = A.map((row,i)=>row.concat([b[i]]));
+  for(let c=0;c<n;c++){
+    let p=c; for(let r=c+1;r<n;r++) if(Math.abs(M[r][c])>Math.abs(M[p][c])) p=r;
+    if(Math.abs(M[p][c])<1e-12) return null;
+    [M[c],M[p]]=[M[p],M[c]];
+    for(let r=0;r<n;r++){ if(r===c) continue; const f=M[r][c]/M[c][c]; if(!f) continue; for(let k=c;k<=n;k++) M[r][k]-=f*M[c][k]; }
+  }
+  return M.map((row,i)=>row[n]/row[i]);
+}
+const NOW_Y = () => { const d=new Date(); return d.getFullYear() + d.getMonth()/12; };
+function fitModel(recs){
+  const rows = recs.filter(r=>priceOk(r) && r.year);
+  const out = {n: rows.length, ok:false};
+  if(rows.length < 20){ out.byModel = groupMedian(rows); return out; }
+  const cnt = k => rows.filter(k).length;
+  const vars = VARIANTS.filter(v=>cnt(r=>(r.model||"Basis")===v)>=2);
+  const baseVar = vars.slice().sort((a,b)=>cnt(r=>(r.model||"Basis")===b)-cnt(r=>(r.model||"Basis")===a))[0];
+  const bodies = ["Sport Turismo","Cross Turismo"].filter(b=>cnt(r=>r.body===b)>=2);
+  const eqKeys = Object.keys(EQ()).map(k=>[k,cnt(r=>(r.equip||[]).includes(k))]).filter(([k,c])=>c>=4 && c<=rows.length-4)
+                 .sort((a,b)=>b[1]-a[1]).slice(0, Math.max(0, Math.min(10, Math.floor(rows.length/8)))).map(x=>x[0]);
+  const useAppr = cnt(r=>r.approved==="ja"||r.approved==="wahrscheinlich")>=3 && cnt(r=>!(r.approved==="ja"||r.approved==="wahrscheinlich"))>=3;
+  const kmMed = median(rows.filter(r=>r.km!=null).map(r=>r.km/Math.max(.5,NOW_Y()-r.year+.5))) || 15000;
+  const feats = r => {
+    const age = Math.max(0, NOW_Y() - r.year - .5);
+    const km = r.km!=null ? r.km : kmMed*age;
+    const x = [1, age, km/10000];
+    vars.forEach(v=>{ if(v!==baseVar) x.push((r.model||"Basis")===v?1:0); });
+    bodies.forEach(b=>x.push(r.body===b?1:0));
+    eqKeys.forEach(k=>x.push((r.equip||[]).includes(k)?1:0));
+    if(useAppr) x.push(r.approved==="ja"||r.approved==="wahrscheinlich"?1:0);
+    return x;
   };
-  const CAR_SVG = '<svg viewBox="0 0 200 64" fill="none" stroke="#f5f5f3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 44c0-6 4-9 12-10l30-4c10-8 26-16 52-16 22 0 38 6 54 15 14 1 30 4 34 9 3 3 3 8 1 10l-4 1"/><path d="M8 44c-1 3 1 5 6 5h14M62 49h78M172 49h10"/><circle cx="45" cy="48" r="10"/><circle cx="157" cy="48" r="10"/><path d="M62 30c14-9 28-12 44-12l2 12zM114 18c14 0 26 4 38 11l-36 1z" stroke-width="1"/><path d="M178 34h12" stroke-width="2.2"/></svg>';
+  const X = rows.map(feats), y = rows.map(r=>Math.log(r.price));
+  const p = X[0].length;
+  const A = Array.from({length:p},()=>Array(p).fill(0)), b = Array(p).fill(0);
+  X.forEach((x,i)=>{ for(let j=0;j<p;j++){ b[j]+=x[j]*y[i]; for(let k=0;k<p;k++) A[j][k]+=x[j]*x[k]; } });
+  for(let j=1;j<p;j++) A[j][j] += 0.8;          // leichte Glättung gegen Ausreißer bei wenigen Daten
+  const beta = solve(A,b);
+  if(!beta){ out.byModel = groupMedian(rows); return out; }
+  const res = X.map((x,i)=> y[i] - x.reduce((s,v,j)=>s+v*beta[j],0));
+  const sd = Math.sqrt(res.reduce((s,v)=>s+v*v,0)/Math.max(1,rows.length-p));
+  let idx = 3 + vars.filter(v=>v!==baseVar).length + bodies.length;
+  const eqEff = eqKeys.map((k,i)=>({k, coef:beta[idx+i], n:cnt(r=>(r.equip||[]).includes(k))}));
+  idx += eqKeys.length;
+  Object.assign(out, {ok:true, beta, feats, sd: Math.max(.035, sd), eqEff, ageEff: beta[1], kmEff: beta[2], baseVar, vars, bodies,
+    apprEff: useAppr ? beta[idx] : null, medPrice: median(rows.map(r=>r.price))});
+  return out;
+}
+function groupMedian(rows){ const g={}; rows.forEach(r=>{ (g[r.model||"Basis"] ||= []).push(r.price); }); const o={}; Object.entries(g).forEach(([k,v])=>{ if(v.length>=3) o[k]=median(v); }); return o; }
+function fairOf(r){
+  const M = S.model; if(!M || !r.year) return null;
+  if(M.ok){
+    const v = Math.exp(M.feats(r).reduce((s,x,j)=>s+x*M.beta[j],0));
+    return {fair:v, lo: v*Math.exp(-M.sd), hi: v*Math.exp(M.sd)};
+  }
+  const m = M.byModel && M.byModel[r.model||"Basis"]; return m ? {fair:m, lo:m*.9, hi:m*1.1, rough:true} : null;
+}
+function rate(r){
+  if(!priceOk(r)) return {cls:"r-na", txt: r.price ? "Preis unklar" : "ohne Preis", dev:null};
+  const f = fairOf(r); if(!f) return {cls:"r-na", txt:"zu wenig Daten", dev:null};
+  const dev = r.price/f.fair - 1;
+  const p = Math.round(dev*100);
+  const s = (p>0?"+":"") + p + " %";
+  if(dev <= -.08) return {cls:"r-top", txt:"Top-Preis "+s, dev, f};
+  if(dev <= -.03) return {cls:"r-good", txt:"Guter Preis "+s, dev, f};
+  if(dev < .03) return {cls:"r-fair", txt:"Fair "+s, dev, f};
+  if(dev < .08) return {cls:"r-high", txt:"Erhöht "+s, dev, f};
+  return {cls:"r-over", txt:"Zu teuer "+s, dev, f};
+}
 
-  const store = {
-    get(k,d){ try{ const v = localStorage.getItem("trm_"+k); return v===null? d : JSON.parse(v); }catch(e){ return d; } },
-    set(k,v){ try{ localStorage.setItem("trm_"+k, JSON.stringify(v)); }catch(e){} }
+// ---------- load
+async function load(){
+  try{
+    const [d, s] = await Promise.all([
+      fetch("data.json",{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.json(); }),
+      fetch("status.json",{cache:"no-store"}).then(r=> r.ok ? r.json() : null).catch(()=>null)
+    ]);
+    if(!d || !Array.isArray(d.active)) throw 0;
+    S.data = d; S.status = s; S.sample = false;
+  }catch(e){ S.data = sampleData(); S.status = sampleStatus(); S.sample = true; }
+  const recent = S.data.removed.filter(r=> Date.now()-t(r.removed) < 90*DAY);
+  S.model = fitModel(S.data.active.concat(recent));
+  S.rate = new Map(); S.data.active.concat(S.data.removed).forEach(r=>S.rate.set(r.key, rate(r)));
+  $("sampleBanner").hidden = !S.sample;
+  buildCriteria(); buildPC(); render();
+}
+
+// ---------- build controls
+function buildCriteria(){
+  const all = S.data.active.concat(S.data.removed);
+  const vc = v => S.data.active.filter(r=>(r.model||"Basis")===v).length;
+  $("fModel").innerHTML = VARIANTS.filter(v=>all.some(r=>(r.model||"Basis")===v)).map(v=>`<button class="chip" type="button" data-m="${v}" aria-pressed="${S.F.models.includes(v)}">${v==="Basis"?"Taycan (Basis)":v}<span class="c">${vc(v)}</span></button>`).join("");
+  $("fBody").innerHTML = BODIES.map(b=>`<button class="chip" type="button" data-b="${b}" aria-pressed="${S.F.bodies.includes(b)}">${b}</button>`).join("");
+  const plats = (S.data.platforms||[]).map(p=>p.id);
+  $("fPlat").innerHTML = plats.map(p=>`<button class="chip" type="button" data-p="${p}" aria-pressed="${S.F.plats.includes(p)}">${esc(NAMES[p]||p)}</button>`).join("");
+  seg("fAppr","appr",[["alle","Alle"],["nicht_nein","Nicht ausgeschlossen"],["ja_wahr","Ja + wahrscheinlich"],["ja","Nur sicher"]]);
+  seg("fVat","vat",[["alle","Alle"],["nicht_nein","Nicht ausgeschlossen"],["ja_wahr","Ja + wahrscheinlich"],["ja","Nur sicher"]]);
+  seg("fSeller","seller",[["alle","Alle"],["händler","Händler"],["privat","Privat"]]);
+  $("fMaxPrice").value = S.F.maxPrice; $("fMinYear").value = S.F.minYear; $("fMaxKm").value = S.F.maxKm;
+  $("fNoDamage").setAttribute("aria-pressed", String(S.F.noDamage));
+  $("fHasPrice").setAttribute("aria-pressed", String(S.F.hasPrice));
+}
+function seg(id,key,opts){ $(id).innerHTML = opts.map(([v,l])=>`<button type="button" data-k="${key}" data-v="${v}" aria-pressed="${S.F[key]===v}">${l}</button>`).join(""); }
+function critSummary(){
+  const F=S.F, p=[];
+  if(F.models.length) p.push(F.models.map(m=>m==="Basis"?"Basis":m).join(", "));
+  if(F.bodies.length) p.push(F.bodies.join(", "));
+  if(F.plats.length) p.push(F.plats.map(x=>NAMES[x]).join(", "));
+  if(num(F.maxPrice)) p.push("bis "+eur(num(F.maxPrice)));
+  if(num(F.minYear)) p.push("EZ ab "+num(F.minYear));
+  if(num(F.maxKm)) p.push("bis "+kmf(num(F.maxKm)));
+  const al = {nicht_nein:"Approved nicht ausgeschl.", ja_wahr:"Approved ja/wahrsch.", ja:"Approved sicher"}; if(al[F.appr]) p.push(al[F.appr]);
+  const vl = {nicht_nein:"MwSt. nicht ausgeschl.", ja_wahr:"MwSt. ja/wahrsch.", ja:"MwSt. sicher"}; if(vl[F.vat]) p.push(vl[F.vat]);
+  if(F.seller!=="alle") p.push(F.seller==="privat"?"Privat":"Händler");
+  if(F.noDamage) p.push("ohne Vorschaden");
+  if(F.hasPrice) p.push("mit Preis");
+  const n = S.data ? S.data.active.filter(passes).length : 0, tot = S.data ? S.data.active.length : 0;
+  $("critSum").innerHTML = (p.length ? p.map(x=>`<span class="pill">${esc(x)}</span>`).join("") : `<span class="pill soft">Alle Taycans</span>`) +
+    `<span class="pill soft num">${n} von ${tot}</span>`;
+  $("critReset").hidden = !p.length;
+}
+
+// ---------- render
+function render(){
+  const d = S.data; if(!d) return;
+  const st = S.status;
+  const okN = st ? Object.values(st.platforms||{}).filter(p=>p.ok).length : 0, totN = st ? Object.keys(st.platforms||{}).length : 0;
+  $("statusText").textContent = S.sample ? "Beispieldaten" : (st ? `Aktualisiert ${ago(t(st.updated))} · ${okN}/${totN} Quellen live` : "Status unbekannt");
+  $("status").classList.toggle("live", !S.sample && okN>0);
+
+  const from = rangeStart();
+  const act = d.active.filter(passes);
+  const all = d.active.concat(d.removed).filter(passes);
+  const news = all.filter(r=>!r.baseline && t(r.first_seen)>=from).sort((a,b)=>t(b.first_seen)-t(a.first_seen));
+  const sold = d.removed.filter(passes).filter(r=>t(r.removed)>=from).sort((a,b)=>t(b.removed)-t(a.removed));
+  const lhMin = parseInt(S.lh,10);
+  const lh = act.filter(r=>days(r)>=lhMin);
+  const counts = {markt:act.length, neu:news.length, verkauft:sold.length, ladenhueter:lh.length};
+  $("tabs").innerHTML = TABS.map(([id,l])=>`<button class="tab" role="tab" type="button" id="tab-${id}" data-view="${id}" aria-selected="${id===S.view}" aria-controls="v-${id}">${l}${counts[id]!=null?` <span class="c">${counts[id]}</span>`:""}</button>`).join("");
+  TABS.forEach(([id])=> $("v-"+id).hidden = id!==S.view);
+  const selTab = document.querySelector(".tab[aria-selected=true]"), rail = document.querySelector(".rail");
+  if(selTab && rail) rail.scrollLeft = selTab.offsetLeft - rail.clientWidth/2 + selTab.offsetWidth/2;
+  $("criteria").hidden = NO_CRITERIA.has(S.view);
+  document.querySelectorAll(".range[role=group]:not(#lhRange)").forEach(g=>{
+    g.innerHTML = [["today","Heute"],["7","7 Tage"],["30","30 Tage"],["90","90 Tage"]].map(([v,l])=>`<button class="rbtn" type="button" data-range="${v}" aria-pressed="${S.range===v}">${l}</button>`).join("");
+  });
+  document.querySelectorAll("[data-lh]").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.lh===S.lh)));
+  critSummary();
+
+  if(S.view==="uebersicht") renderOverview(act, news, sold);
+  if(S.view==="markt") renderMarkt(act);
+  if(S.view==="neu") renderList("lNeu","moreNeu", news, "neu");
+  if(S.view==="verkauft") renderList("lVerkauft","moreVerkauft", sold, "verkauft");
+  if(S.view==="ladenhueter") renderLh(lh);
+  if(S.view==="analyse") renderAnalyse(act);
+  if(S.view==="preischeck") renderPC();
+  if(S.view==="quellen") renderSources();
+}
+
+function uniqueCount(rs){ const seen=new Set(); let n=0; rs.forEach(r=>{ if(r.also&&r.also.length){ const fp=[r.year,r.price,Math.round((r.km||0)/1000)].join("|"); if(seen.has(fp)) return; seen.add(fp);} n++; }); return n; }
+
+function renderOverview(act, news, sold){
+  const soldKnown = sold.filter(r=>!r.baseline);
+  const prices = act.filter(priceOk).map(r=>r.price);
+  const dSold = soldKnown.map(days);
+  $("kpis").innerHTML = `
+    <div class="kpi"><div class="l">Im Markt</div><div class="v num">${act.length}</div><div class="s">${uniqueCount(act)} verschiedene Autos</div></div>
+    <div class="kpi up"><div class="l">Neu · ${rangeLabel()}</div><div class="v num">+${news.length}</div><div class="s">${news.filter(r=>r.removed).length} davon schon weg</div></div>
+    <div class="kpi"><div class="l">Weg · ${rangeLabel()}</div><div class="v num">−${sold.length}</div><div class="s">verkauft / offline</div></div>
+    <div class="kpi"><div class="l">Median-Preis</div><div class="v num">${prices.length?keur(median(prices)):"–"}</div><div class="s">${prices.length?`Ø ${eur(mean(prices))}`:"keine Preise"}</div></div>
+    <div class="kpi"><div class="l">Standzeit bis Verkauf</div><div class="v num">${dSold.length?Math.round(median(dSold)):"–"}<small>${dSold.length?"Tage":""}</small></div><div class="s">${dSold.length?`Median aus ${dSold.length} Verkäufen`:"noch keine Verkäufe gemessen"}</div></div>`;
+
+  const st = (S.status && S.status.platforms) || {};
+  const plats = (S.data.platforms||[]).map(p=>p.id);
+  let rows="", tA=0,tN=0,tS=0;
+  plats.forEach(pid=>{
+    const a = act.filter(r=>r.platform===pid), n = news.filter(r=>r.platform===pid).length, s = sold.filter(r=>r.platform===pid).length;
+    const mp = median(a.filter(priceOk).map(r=>r.price));
+    tA+=a.length; tN+=n; tS+=s;
+    const ps = st[pid];
+    const chip = !ps ? `<span class="st">–</span>` : ps.ok ? (ps.count===0 ? `<span class="st off" title="Seite geladen, aber keine Autos erkannt"><i></i>0 erkannt</span>` : `<span class="st good"><i></i>Live</span>`)
+      : `<span class="st off" title="${esc(ps.error||"")}"><i></i>Blockiert</span>`;
+    rows += `<tr class="click" data-plat="${pid}" tabindex="0"><td class="p">${esc(NAMES[pid]||pid)}</td><td>${chip}</td><td class="num"><b>${a.length}</b></td><td class="plus">${n?"+"+n:"0"}</td><td class="muted">${s?"−"+s:"0"}</td><td>${mp?eur(mp):"–"}</td></tr>`;
+  });
+  $("ledger").innerHTML = `<thead><tr><th>Plattform</th><th>Status</th><th>Im Markt</th><th>Neu</th><th>Weg</th><th>Median-Preis</th></tr></thead>
+    <tbody>${rows}<tr class="total"><td>Gesamt</td><td></td><td>${tA}</td><td class="plus">+${tN}</td><td class="muted">−${tS}</td><td>${prices.length?eur(median(prices)):"–"}</td></tr></tbody>`;
+
+  const dk=[]; const t0=new Date(); t0.setHours(0,0,0,0);
+  for(let i=13;i>=0;i--) dk.push(dayKey(t0.getTime()-i*DAY));
+  const hist = S.data.history||{};
+  const stock = dk.map(k=>{ const v=hist[k]; return v ? Object.values(v).reduce((a,b)=>a+b,0) : null; });
+  const allF = S.data.active.concat(S.data.removed).filter(passes);
+  const inn = dk.map(k=>allF.filter(r=>!r.baseline && dayKey(t(r.first_seen))===k).length);
+  const out = dk.map(k=>S.data.removed.filter(passes).filter(r=>dayKey(t(r.removed))===k).length);
+  drawStock($("chStock"), dk, stock); drawFlow($("chFlow"), dk, inn, out);
+
+  const withR = act.map(r=>[r,S.rate.get(r.key)]).filter(([r,x])=>x && x.dev!=null);
+  const best = withR.sort((a,b)=>a[1].dev-b[1].dev)[0];
+  const fastest = S.data.removed.filter(passes).filter(r=>!r.baseline).sort((a,b)=>days(a)-days(b))[0];
+  const dropped = act.filter(r=>priceDrop(r)>0).sort((a,b)=>priceDrop(b)-priceDrop(a))[0];
+  const longest = act.slice().sort((a,b)=>days(b)-days(a))[0];
+  const pc = (l,v,r) => r ? `<a class="pcard" href="${esc(r.url)}" target="_blank" rel="noopener"><span class="l">${l}</span><span class="v num">${v}</span><span class="t2">${esc(fullLabel(r))} · ${r.year||"EZ ?"} · ${esc(NAMES[r.platform])}</span></a>`
+                         : `<div class="pcard"><span class="l">${l}</span><span class="v">–</span><span class="t2">Noch keine Daten</span></div>`;
+  $("pulse").innerHTML = pc("Bester Deal", best? `${Math.round(best[1].dev*100)} %` : "", best&&best[0]) +
+    pc("Schnellster Verkauf", fastest? Math.round(days(fastest))+" Tage":"", fastest) +
+    pc("Größte Preissenkung", dropped? "−"+eur(priceDrop(dropped)):"", dropped) +
+    pc("Längste Standzeit", longest? daysTxt(longest).replace(" T"," Tage"):"", longest);
+}
+
+function sortRecs(list, how){
+  const R = r => S.rate.get(r.key) || {};
+  const f = {
+    deal:(a,b)=>((R(a).dev??9)-(R(b).dev??9)),
+    new:(a,b)=>t(b.first_seen)-t(a.first_seen),
+    pa:(a,b)=>(priceOk(a)?a.price:1e9)-(priceOk(b)?b.price:1e9),
+    pd:(a,b)=>(priceOk(b)?b.price:0)-(priceOk(a)?a.price:0),
+    km:(a,b)=>(a.km??1e9)-(b.km??1e9),
+    days:(a,b)=>days(b)-days(a),
+    over:(a,b)=>((R(b).dev??-9)-(R(a).dev??-9)) || days(b)-days(a)
+  }[how];
+  return list.slice().sort(f);
+}
+function renderMarkt(act){
+  $("sortMarkt").value = S.sort;
+  const list = sortRecs(act, S.sort);
+  $("cntMarkt").textContent = `${list.length} Autos · ${uniqueCount(list)} verschiedene`;
+  renderList("lMarkt","moreMarkt", list, "markt");
+}
+function renderLh(lh){
+  const list = sortRecs(lh, "over");
+  const over = list.filter(r=>{ const x=S.rate.get(r.key); return x && x.dev!=null && x.dev>=.03; });
+  $("cntLh").textContent = `${list.length} Autos ab ${S.lh} Tagen · ${over.length} davon über Marktwert`;
+  renderList("lLh","moreLh", list, "lh");
+}
+function renderList(listId, moreId, list, kind){
+  const el = $(listId), n = S.shown[listId] || PAGE;
+  if(!list.length){
+    const msg = {neu:["Keine neuen Autos", "im gewählten Zeitraum"], verkauft:["Noch keine Verkäufe", "im gewählten Zeitraum. Ein Auto zählt erst als weg, wenn es zweimal in Folge fehlt."],
+      markt:["Keine Autos", "für diese Kriterien. Lockere die Kriterien oben."], lh:["Keine Ladenhüter", "für diese Mindest-Standzeit."]}[kind];
+    el.innerHTML = `<div class="empty"><b>${msg[0]}</b>${msg[1]}</div>`; $(moreId).innerHTML = ""; return;
+  }
+  el.innerHTML = list.slice(0,n).map(r=>card(r, kind)).join("");
+  el.querySelectorAll("img[data-fb]").forEach(img=>img.addEventListener("error",()=>img.remove(),{once:true}));
+  $(moreId).innerHTML = list.length>n ? `<button class="go ghost" type="button" data-more="${listId}">${list.length-n} weitere zeigen</button>` : "";
+}
+function apprBadge(r){
+  const a=r.approved||"unbekannt", u=r.approved_until?` bis ${r.approved_until}`:"";
+  if(a==="ja") return `<span class="badge good">Approved${u}</span>`;
+  if(a==="wahrscheinlich") return `<span class="badge">Approved wahrsch.</span>`;
+  if(a==="abgelaufen") return `<span class="badge warn">Approved abgelaufen${u}</span>`;
+  if(a==="nein") return `<span class="badge bad">kein Approved</span>`;
+  return `<span class="badge soft">Approved ?</span>`;
+}
+function vatBadge(r){
+  const v=r.vat||"unbekannt";
+  if(v==="ja") return `<span class="badge good">MwSt.</span>`;
+  if(v==="wahrscheinlich") return `<span class="badge">MwSt. wahrsch.</span>`;
+  if(v==="nein") return `<span class="badge soft">ohne MwSt.</span>`;
+  return `<span class="badge soft">MwSt. ?</span>`;
+}
+function card(r, kind){
+  const sold = kind==="verkauft";
+  const R = S.rate.get(r.key) || {cls:"r-na", txt:"–"};
+  const name = NAMES[r.platform] || r.platform;
+  const drop = priceDrop(r);
+  const startP = (r.prices&&r.prices[0]&&r.prices[0][1]) || r.price;
+  const eq = (r.equip||[]).map(k=>EQ()[k]).filter(Boolean);
+  const badges = [apprBadge(r), vatBadge(r)];
+  if(r.seller) badges.push(`<span class="badge soft">${r.seller==="privat"?"Privat":"Händler"}</span>`);
+  if(r.damage==="vorschaden") badges.push(`<span class="badge bad">Vorschaden</span>`);
+  if(r.damage==="unfallfrei") badges.push(`<span class="badge soft">unfallfrei</span>`);
+  if(r.soh) badges.push(`<span class="badge soft">Akku ${r.soh} %</span>`);
+  if(drop>0) badges.push(`<span class="badge good">Preis −${eur(drop)}</span>`);
+  (r.also||[]).forEach(p=>badges.push(`<span class="badge soft">auch auf ${esc(NAMES[p]||p)}</span>`));
+  if(!sold && r.removed) badges.push(`<span class="badge soft">schon weg</span>`);
+  const when = sold ? `weg ${ago(t(r.removed))}` : kind==="neu" ? ago(t(r.first_seen)) : `online ${daysTxt(r)}`;
+  const img = r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb>` : "";
+  const fairTxt = R.f ? `Marktwert ca. ${eur(R.f.fair)}${R.f.rough?" (grob)":""}` : "";
+  const nego = kind==="lh" && R.f && r.price>R.f.fair ? `<span class="badge warn">Spielraum ca. ${eur(r.price-R.f.fair)}</span>` : "";
+  const facts = sold
+    ? `<div><div class="l">Standzeit</div><div class="v">${daysTxt(r)}</div></div><div><div class="l">Startpreis</div><div class="v">${startP?keur(startP):"–"}</div></div>
+       <div><div class="l">EZ</div><div class="v">${r.year||"–"}</div></div><div><div class="l">km</div><div class="v">${r.km!=null?Math.round(r.km/1000)+" T":"–"}</div></div>`
+    : `<div><div class="l">EZ</div><div class="v">${r.year||"–"}</div></div><div><div class="l">km</div><div class="v">${r.km!=null?Math.round(r.km/1000)+" T":"–"}</div></div>
+       <div><div class="l">PS</div><div class="v">${r.ps||"–"}</div></div><div><div class="l">Standzeit</div><div class="v">${daysTxt(r)}</div></div>`;
+  return `<article class="car${sold?" sold":""}">
+    <div class="shot"><div class="ph">${CAR_SVG}</div>${img}<span class="ptag">${esc(name)}</span><span class="when">${when}</span></div>
+    <div class="cbody">
+      <span class="cmodel">${esc(fullLabel(r))}</span>
+      <h3 class="ctitle">${esc(r.title||"Porsche Taycan")}</h3>
+      <div class="cprice"><span class="pr num">${eur(r.price)}</span><span class="rating ${R.cls}">${esc(R.txt)}</span></div>
+      ${fairTxt?`<span class="fair">${fairTxt}${sold?" · letzter Preis":""}</span>`:""}
+      ${(r.description||r.snippet)?`<p class="snip">${esc(r.description||r.snippet)}</p>`:""}
+      <div class="badges">${badges.join("")}${nego}</div>
+      ${eq.length?`<div class="badges">${eq.slice(0,8).map(e=>`<span class="badge soft">${esc(e)}</span>`).join("")}${eq.length>8?`<span class="badge soft">+${eq.length-8}</span>`:""}</div>`:""}
+      <div class="facts">${facts}</div>
+      <a class="go${sold?" ghost":""}" href="${esc(r.url)}" target="_blank" rel="noopener">${sold?"Letztes Inserat ansehen":"Inserat öffnen"}${ARROW}</a>
+      ${sold?`<p class="note">${esc(r.gone_reason||"")}${r.gone_reason?" · ":""}Seite evtl. schon gelöscht</p>`:""}
+    </div></article>`;
+}
+
+// ---------- Analyse
+function renderAnalyse(act){
+  const rem = S.data.removed.filter(passes);
+  const known = rem.filter(r=>!r.baseline);
+  const groups = {};
+  act.concat(rem).forEach(r=>{ const k=label(r); (groups[k] ||= {k, model:r.model||"Basis", body:r.body||"Limousine", act:[], rem:[]}); (r.removed?groups[k].rem:groups[k].act).push(r); });
+  const order = Object.values(groups).sort((a,b)=>VARIANTS.indexOf(a.model)-VARIANTS.indexOf(b.model) || BODIES.indexOf(a.body)-BODIES.indexOf(b.body));
+  const sold30 = g => g.rem.filter(r=>Date.now()-t(r.removed)<30*DAY).length;
+  const speed = g => { const d=g.rem.filter(r=>!r.baseline).map(days); return d.length ? {med:median(d), n:d.length} : null; };
+  const tempo = sp => !sp ? `<span class="st">zu wenig Daten</span>` : sp.med<=14 ? `<span class="st good"><i></i>schnell</span>` : sp.med<=35 ? `<span class="st"><i></i>normal</span>` : `<span class="st off"><i></i>langsam</span>`;
+  const maxN = Math.max(1,...order.map(g=>g.act.length));
+  $("tModels").innerHTML = `<thead><tr><th>Modell</th><th>Im Markt</th><th>Median-Preis</th><th>Spanne (mittlere 50 %)</th><th>Ø km</th><th>Weg (30 T)</th><th>Tage bis weg</th><th>Tempo</th></tr></thead><tbody>` +
+    order.map(g=>{ const p=g.act.filter(priceOk).map(r=>r.price), kms=g.act.filter(r=>r.km!=null).map(r=>r.km), sp=speed(g);
+      return `<tr class="click" data-model="${esc(g.model)}" data-body="${esc(g.body)}" tabindex="0"><td class="p">${esc("Taycan "+(g.model==="Basis"?"":g.model+" ")+g.body)}</td>
+        <td><span class="barcell">${g.act.length}<span class="track"><i style="width:${g.act.length/maxN*100}%"></i></span></span></td>
+        <td>${p.length?eur(median(p)):"–"}</td><td class="muted">${p.length>=3?keur(quant(p,.25))+" – "+keur(quant(p,.75)):"–"}</td>
+        <td>${kms.length?kmf(mean(kms)):"–"}</td><td>${sold30(g)}</td><td>${sp?Math.round(sp.med)+" T":"–"}</td><td>${tempo(sp)}</td></tr>`; }).join("") + `</tbody>`;
+
+  // Callouts
+  const sp = order.map(g=>({g, s:speed(g)})).filter(x=>x.s && x.s.n>=2).sort((a,b)=>a.s.med-b.s.med);
+  const kd = known.map(days);
+  const share = (rs,f) => rs.length ? Math.round(rs.filter(f).length/rs.length*100) : 0;
+  $("callouts").innerHTML = `
+    <div class="pcard"><span class="l">Verkauft sich am schnellsten</span><span class="v">${sp.length?esc("Taycan "+(sp[0].g.model==="Basis"?"":sp[0].g.model+" ")+sp[0].g.body):"–"}</span>
+      <span class="t2">${sp.length?`Median ${Math.round(sp[0].s.med)} Tage · ${sp[0].s.n} Verkäufe`:"Braucht ein paar Tage Daten"}</span></div>
+    <div class="pcard"><span class="l">Typische Standzeit bis Verkauf</span><span class="v num">${kd.length?Math.round(median(kd))+" Tage":"–"}</span>
+      <span class="t2">${kd.length?`aus ${kd.length} Verkäufen · schnellstes Viertel ≤ ${Math.round(quant(kd,.25))} T`:"Noch keine Verkäufe gemessen"}</span></div>
+    <div class="pcard"><span class="l">Anteil Approved / MwSt.</span><span class="v num">${share(act,r=>r.approved==="ja"||r.approved==="wahrscheinlich")} % / ${share(act,r=>r.vat==="ja"||r.vat==="wahrscheinlich")} %</span>
+      <span class="t2">der Autos im Markt (deine Kriterien)</span></div>`;
+
+  drawScatter($("chScatter"), act.filter(r=>priceOk(r) && r.km!=null));
+
+  // Years
+  const ys = {}; act.filter(priceOk).forEach(r=>{ if(r.year) (ys[r.year] ||= []).push(r); });
+  const yk = Object.keys(ys).sort();
+  $("tYears").innerHTML = `<thead><tr><th>EZ</th><th>Autos</th><th>Median</th><th>Spanne</th><th>Ø km</th></tr></thead><tbody>` +
+    (yk.length ? yk.map(y=>{ const p=ys[y].map(r=>r.price), k=ys[y].filter(r=>r.km!=null).map(r=>r.km);
+      return `<tr><td class="p">${y}</td><td>${p.length}</td><td>${eur(median(p))}</td><td class="muted">${p.length>=3?keur(quant(p,.25))+" – "+keur(quant(p,.75)):"–"}</td><td>${k.length?kmf(mean(k)):"–"}</td></tr>`; }).join("")
+      : `<tr><td colspan="5" class="muted">Keine Daten</td></tr>`) + `</tbody>`;
+
+  // Equipment
+  const M = S.model;
+  if(M && M.ok){
+    const base = M.medPrice;
+    const rows = [["1 Jahr älter", Math.exp(M.ageEff)-1, null], ["10.000 km mehr", Math.exp(M.kmEff)-1, null]]
+      .concat(M.apprEff!=null?[["Porsche Approved", Math.exp(M.apprEff)-1, null]]:[])
+      .concat(M.eqEff.map(e=>[EQ()[e.k], Math.exp(e.coef)-1, e.n]));
+    $("tEquip").innerHTML = `<thead><tr><th>Merkmal</th><th>Effekt</th><th>≈ in €</th><th>Autos</th></tr></thead><tbody>` +
+      rows.map(([l,p,n])=>`<tr><td class="p">${esc(l)}</td><td class="${p>=0?"plus":"muted"}">${p>=0?"+":""}${(p*100).toFixed(1)} %</td><td>${p>=0?"+":"−"}${eur(Math.abs(p*base))}</td><td class="muted">${n??"alle"}</td></tr>`).join("") + `</tbody>`;
+    $("equipHint").textContent = `Geschätzt aus ${M.n} Autos mit Preis, Baujahr und km. Effekte gelten bei sonst gleichem Auto (Modell, Baujahr, km). Bei wenigen Autos schwanken die Werte noch stark.`;
+  } else {
+    $("tEquip").innerHTML = `<tbody><tr><td class="txt">Noch zu wenige Autos mit Preis und Baujahr (mindestens 20). Bis dahin gibt es nur eine grobe Bewertung je Modell.</td></tr></tbody>`;
+    $("equipHint").textContent = "";
+  }
+
+  $("tGuide").innerHTML = `<thead><tr><th>Bewertung</th><th>Abweichung vom Marktwert</th><th style="text-align:left">Bedeutung</th></tr></thead><tbody>
+    <tr><td><span class="rating r-top">Top-Preis</span></td><td>8 % und mehr darunter</td><td class="txt">Schnell sein. Prüfen, warum er so günstig ist (Vorschaden, Akku, Ausstattung).</td></tr>
+    <tr><td><span class="rating r-good">Guter Preis</span></td><td>3 – 8 % darunter</td><td class="txt">Kaufen, wenn Zustand passt.</td></tr>
+    <tr><td><span class="rating r-fair">Fair</span></td><td>± 3 %</td><td class="txt">Marktüblich, ein paar Hundert Euro sind meist drin.</td></tr>
+    <tr><td><span class="rating r-high">Erhöht</span></td><td>3 – 8 % darüber</td><td class="txt">Verhandeln, besonders nach langer Standzeit.</td></tr>
+    <tr><td><span class="rating r-over">Zu teuer</span></td><td>8 % und mehr darüber</td><td class="txt">Nur mit sehr guter Ausstattung oder Zustand gerechtfertigt.</td></tr></tbody>`;
+}
+
+// ---------- Preis-Check
+function buildPC(){
+  const y = new Date().getFullYear();
+  $("pcModel").innerHTML = VARIANTS.map(v=>`<option value="${v}">${v==="Basis"?"Taycan (Basis)":v}</option>`).join("");
+  $("pcYear").innerHTML = Array.from({length:y-2018},(_,i)=>2019+i).reverse().map(v=>`<option>${v}</option>`).join("");
+  $("pcEquip").innerHTML = Object.entries(EQ()).map(([k,l])=>`<button class="chip" type="button" data-eq="${k}" aria-pressed="${S.pc.equip.includes(k)}">${esc(l)}</button>`).join("");
+  $("pcModel").value = S.pc.model; $("pcBody").value = S.pc.body; $("pcYear").value = S.pc.year; $("pcKm").value = S.pc.km; $("pcPrice").value = S.pc.price; $("pcAppr").value = S.pc.appr;
+}
+function renderPC(){
+  const P = S.pc;
+  const r = {model:P.model, body:P.body, year:parseInt(P.year,10), km:num(P.km) ?? 0, equip:P.equip, approved:P.appr==="1"?"ja":"nein", price:num(P.price)};
+  const f = fairOf(r); const M = S.model;
+  if(!f){ $("pcResult").innerHTML = `<span class="clabel">Marktwert</span><span class="big">–</span><p class="hint">Noch zu wenige Autos mit Preis, Baujahr und km. Sobald der Radar ein paar Tage gelaufen ist, steht hier der Wert.</p>`; }
+  else {
+    let verdict = "";
+    if(r.price){ const x = rate(Object.assign({},r,{key:"pc"})); verdict = `<span class="rating ${x.cls}" style="align-self:flex-start;font-size:13px">${esc(x.txt)}</span>`; }
+    const lo=f.lo, hi=f.hi, minV=lo*.85, maxV=hi*1.15, pos=v=>Math.min(100,Math.max(0,(v-minV)/(maxV-minV)*100));
+    $("pcResult").innerHTML = `<span class="clabel">Marktwert für dieses Auto</span><span class="big num">${eur(f.fair)}</span>
+      <span class="fair">Üblicher Bereich ${eur(lo)} – ${eur(hi)}${f.rough?" (grob, wenige Daten)":""}</span>${verdict}
+      <div class="scale" aria-hidden="true">
+        <div class="band" style="left:0;width:${pos(f.fair*.97)}%;background:var(--good-bg);border:1px solid rgba(159,220,184,.5)"></div>
+        <div class="band" style="left:${pos(f.fair*.97)}%;width:${pos(f.fair*1.03)-pos(f.fair*.97)}%;background:rgba(255,255,255,.12)"></div>
+        <div class="band" style="left:${pos(f.fair*1.03)}%;width:${100-pos(f.fair*1.03)}%;background:var(--warn-bg);border:1px solid rgba(232,201,138,.5)"></div>
+        <div class="mk" style="left:${pos(f.fair)}%"></div><span class="lab" style="left:${pos(f.fair)}%">Marktwert</span>
+        ${r.price?`<div class="mk" style="left:${pos(r.price)}%;background:var(--warn);width:3px"></div>`:""}
+      </div>
+      <p class="hint" style="margin-top:14px">Berechnet aus ${M?M.n:0} Autos. Grün = günstiger als üblich, gelb = teurer.</p>`;
+  }
+  const sim = S.data.active.filter(x=>priceOk(x) && x.year)
+    .map(x=>({x, d: ((x.model||"Basis")===r.model?0:3) + ((x.body||"Limousine")===r.body?0:1.5) + Math.abs(x.year-r.year)*1 + Math.abs((x.km??r.km)-r.km)/20000
+      + (r.equip.filter(k=>!(x.equip||[]).includes(k)).length + (x.equip||[]).filter(k=>!r.equip.includes(k)).length)*.15}))
+    .sort((a,b)=>a.d-b.d).slice(0,6).map(o=>o.x);
+  $("pcSimilar").innerHTML = sim.length ? sim.map(x=>card(x,"markt")).join("") : `<div class="empty"><b>Keine Vergleichsautos</b>Noch keine Daten.</div>`;
+  $("pcSimilar").querySelectorAll("img[data-fb]").forEach(img=>img.addEventListener("error",()=>img.remove(),{once:true}));
+}
+
+// ---------- Quellen
+function renderSources(){
+  const st = S.status || {};
+  const pend = st.pending_details ?? "–";
+  $("srcKpis").innerHTML = `
+    <div class="kpi"><div class="l">Letzter Lauf</div><div class="v num" style="font-size:24px">${st.updated?ago(t(st.updated)):"–"}</div><div class="s">${esc(st.mode||"")}</div></div>
+    <div class="kpi"><div class="l">Letzter Vollscan</div><div class="v num" style="font-size:24px">${st.last_full?ago(t(st.last_full)):"–"}</div><div class="s">alle Seiten aller Suchen</div></div>
+    <div class="kpi"><div class="l">Detailseiten offen</div><div class="v num" style="font-size:24px">${pend}</div><div class="s">werden nach und nach gelesen</div></div>
+    <div class="kpi"><div class="l">Autos gesamt</div><div class="v num" style="font-size:24px">${S.data.active.length}</div><div class="s">ohne Kriterien</div></div>
+    <div class="kpi"><div class="l">Aussortiert</div><div class="v num" style="font-size:24px">${(S.data.excluded||[]).length}</div><div class="s">kein Taycan / Gesuch</div></div>`;
+  const P = st.platforms || {};
+  const expl = {mobile:"Blockt GitHub. Nutze den Suchauftrag in der mobile.de-App.", ebay:"Blockt GitHub. Auf eBay gibt es nur wenige Taycans.",
+    porsche:"Alle Autos dort sind Approved.", autoscout:"Wird nach Baujahren getrennt gelesen, damit kein Auto über das Seitenlimit fällt.", kleinanzeigen:"Zwei Suchwörter, damit auch Inserate ohne „Porsche“ im Titel dabei sind."};
+  $("tSrc").innerHTML = `<thead><tr><th>Plattform</th><th>Status</th><th>Autos</th><th>Hinweis</th></tr></thead><tbody>` +
+    Object.keys(NAMES).filter(p=>P[p]).map(p=>{ const x=P[p];
+      const chip = x.ok ? (x.count===0?`<span class="st off"><i></i>0 erkannt</span>`:`<span class="st good"><i></i>Live</span>`) : `<span class="st off"><i></i>Blockiert</span>`;
+      const note = !x.ok ? (x.error||"") + " · " + (expl[p]||"") : x.count===0 ? "Seite lädt, aber Autos werden noch nicht erkannt. Wird nachgebessert." : (expl[p]||"");
+      return `<tr><td class="p">${esc(NAMES[p])}</td><td>${chip}</td><td>${x.count??"–"}</td><td class="muted" style="white-space:normal;text-align:left">${esc(note)}</td></tr>`; }).join("") + `</tbody>`;
+  const SR = st.searches || {};
+  $("tSearch").innerHTML = `<thead><tr><th>Suche</th><th>Autos</th><th>Seiten</th><th>Status</th></tr></thead><tbody>` +
+    (Object.keys(SR).length ? Object.entries(SR).map(([n,x])=>`<tr><td class="p">${esc(n)}</td><td>${x.count??0}</td><td>${x.pages??0}</td><td>${x.error?`<span class="st off"><i></i>${esc(x.error.split(" –")[0])}</span>`:x.limit?`<span class="st off"><i></i>Seitenlimit</span>`:`<span class="st good"><i></i>ok</span>`}</td></tr>`).join("")
+      : `<tr><td colspan="4" class="muted">Noch kein Lauf</td></tr>`) + `</tbody>`;
+  const ex = S.data.excluded || [];
+  $("tExcl").innerHTML = `<thead><tr><th>Inserat</th><th>Grund</th></tr></thead><tbody>` +
+    (ex.length ? ex.map(x=>`<tr><td class="p" style="white-space:normal"><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title||x.key)}</a></td><td class="muted">${esc(x.why)}</td></tr>`).join("")
+      : `<tr><td colspan="2" class="muted">Nichts aussortiert</td></tr>`) + `</tbody>`;
+}
+
+// ---------- charts
+const W=480, H=200, PL=36, PR=40, PT=16, PB=26;
+const short = k => { const [y,m,d]=k.split("-"); return `${d}.${m}.`; };
+function drawStock(box, dk, vals){
+  const plot = box.querySelector(".plot"); const real = vals.filter(v=>v!==null);
+  if(!real.length){ plot.innerHTML = `<div class="empty"><b>Noch kein Verlauf</b>Erscheint nach dem ersten Vollscan.</div>`; return; }
+  const lo = Math.max(0, Math.floor(Math.min(...real)*0.9/10)*10), hi = Math.ceil(Math.max(...real)*1.05/10)*10 || 10;
+  const x = i => PL + i*(W-PL-PR)/(dk.length-1), y = v => PT + (H-PT-PB)*(1-(v-lo)/((hi-lo)||1));
+  let g=""; for(let i=0;i<=4;i++){ const v=lo+(hi-lo)*i/4; g+=`<line x1="${PL}" x2="${W-PR}" y1="${y(v)}" y2="${y(v)}" stroke="var(--hair)"/><text x="${PL-8}" y="${y(v)+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${Math.round(v)}</text>`; }
+  const pts = vals.map((v,i)=>v===null?null:[x(i),y(v)]); const segs=[]; let cur=[];
+  pts.forEach(p=>{ if(p) cur.push(p); else if(cur.length){ segs.push(cur); cur=[]; } }); if(cur.length) segs.push(cur);
+  const line = segs.map(s=>"M"+s.map(p=>p.join(",")).join("L")).join("");
+  const area = segs.map(s=>`M${s[0][0]},${H-PB}L`+s.map(p=>p.join(",")).join("L")+`L${s[s.length-1][0]},${H-PB}Z`).join("");
+  const li = vals.map((v,i)=>v!==null?i:-1).filter(i=>i>=0).pop();
+  const labels = dk.map((k,i)=>(i%3===0||i===dk.length-1)?`<text x="${x(i)}" y="${H-8}" text-anchor="middle" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${i===dk.length-1?"Heute":short(k)}</text>`:"").join("");
+  plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Inserate im Markt"><defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f5f3" stop-opacity=".22"/><stop offset="1" stop-color="#f5f5f3" stop-opacity="0"/></linearGradient></defs>
+    ${g}<path d="${area}" fill="url(#gs)"/><path d="${line}" fill="none" stroke="var(--white)" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${x(li)}" cy="${y(vals[li])}" r="4.5" fill="var(--white)" stroke="var(--black)" stroke-width="2"/>
+    <text x="${x(li)+9}" y="${y(vals[li])+4}" fill="var(--white)" font-size="12" font-weight="600" font-family="var(--f-display)">${vals[li]}</text>
+    ${labels}${hit(dk.length, x, i=>`<b>${i===dk.length-1?"Heute":short(dk[i])}</b><br>${vals[i]===null?"keine Messung":vals[i]+" Inserate"}`)}</svg>`;
+  tips(plot);
+}
+function drawFlow(box, dk, inn, out){
+  const plot = box.querySelector(".plot"); const m = Math.max(1,...inn,...out); const step = m<=5?1:m<=10?2:m<=25?5:10; const mx = Math.ceil(m/step)*step;
+  const mid = PT+(H-PT-PB)/2, half=(H-PT-PB)/2, bw=(W-PL-PR)/dk.length, x=i=>PL+i*bw;
+  let g = `<line x1="${PL}" x2="${W-PR}" y1="${mid}" y2="${mid}" stroke="var(--hair-strong)"/><line x1="${PL}" x2="${W-PR}" y1="${PT}" y2="${PT}" stroke="var(--hair)"/><line x1="${PL}" x2="${W-PR}" y1="${H-PB}" y2="${H-PB}" stroke="var(--hair)"/>`;
+  g += `<text x="${PL-8}" y="${PT+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">+${mx}</text><text x="${PL-8}" y="${mid+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">0</text><text x="${PL-8}" y="${H-PB+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">−${mx}</text>`;
+  const w=Math.max(4,bw*.56), r=Math.min(3,w/2);
+  dk.forEach((k,i)=>{ const cx=x(i)+(bw-w)/2;
+    if(inn[i]){ const top=mid-half*inn[i]/mx; g+=`<path d="${bar(cx,top,w,mid-top-1,r,true)}" fill="var(--up)"/>`; }
+    if(out[i]){ const bot=mid+half*out[i]/mx; g+=`<path d="${bar(cx,mid+1,w,bot-mid-1,r,false)}" fill="var(--down)"/>`; }
+    if(i%3===0||i===dk.length-1) g+=`<text x="${x(i)+bw/2}" y="${H-8}" text-anchor="middle" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${i===dk.length-1?"Heute":short(k)}</text>`; });
+  plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Neue und verschwundene Inserate je Tag">${g}${hit(dk.length,i=>x(i)+bw/2,i=>`<b>${i===dk.length-1?"Heute":short(dk[i])}</b><br>+${inn[i]} neu · −${out[i]} weg`)}</svg>`;
+  tips(plot);
+}
+function drawScatter(box, rs){
+  const plot = box.querySelector(".plot");
+  if(rs.length<3){ plot.innerHTML = `<div class="empty"><b>Zu wenige Autos</b>Für die Grafik braucht es mindestens 3 Autos mit Preis und km.</div>`; return; }
+  const SW=960, SH=300, L=56, Rr=16, T=14, B=34;
+  const xs=rs.map(r=>r.km), ys=rs.map(r=>r.price);
+  const xmax=Math.ceil(Math.max(...xs)*1.05/20000)*20000||20000, ymin=Math.floor(Math.min(...ys)*.95/10000)*10000, ymax=Math.ceil(Math.max(...ys)*1.03/10000)*10000;
+  const X=v=>L+(SW-L-Rr)*v/xmax, Y=v=>T+(SH-T-B)*(1-(v-ymin)/((ymax-ymin)||1));
+  let g="";
+  const ys_=(ymax-ymin)/10000; const ystep=ys_<=6?10000:ys_<=12?20000:30000;
+  for(let v=ymin; v<=ymax+1; v+=ystep) g+=`<line x1="${L}" x2="${SW-Rr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--hair)"/><text x="${L-8}" y="${Y(v)+3.5}" text-anchor="end" fill="var(--grey)" font-size="11" font-family="var(--f-mono)">${v/1000} T€</text>`;
+  const xstep = xmax<=80000?20000:xmax<=200000?40000:50000;
+  for(let v=0; v<=xmax; v+=xstep) g+=`<text x="${X(v)}" y="${SH-12}" text-anchor="middle" fill="var(--grey)" font-size="11" font-family="var(--f-mono)">${v/1000} T km</text>`;
+  const col = c => ({"r-top":"var(--good)","r-good":"var(--good)","r-fair":"var(--white)","r-high":"var(--warn)","r-over":"var(--bad)"}[c]||"var(--grey)");
+  rs.forEach(r=>{ const R=S.rate.get(r.key)||{}; g+=`<circle cx="${X(r.km)}" cy="${Y(r.price)}" r="5" fill="${col(R.cls)}" stroke="var(--black)" stroke-width="2"/>`; });
+  rs.forEach(r=>{ const R=S.rate.get(r.key)||{}; g+=`<circle cx="${X(r.km)}" cy="${Y(r.price)}" r="12" fill="#000" fill-opacity="0" data-x="${X(r.km)}" data-y="${Y(r.price)}" data-href="${esc(r.url)}" data-tip="${esc(`<b>${esc(fullLabel(r))}</b><br>${eur(r.price)} · ${kmf(r.km)} · EZ ${r.year||"?"}<br>${esc(R.txt||"")}`)}" style="cursor:pointer"/>`; });
+  plot.innerHTML = `<svg viewBox="0 0 ${SW} ${SH}" role="img" aria-label="Preis gegen Laufleistung">${g}</svg>`;
+  tips(plot, SW, true);
+}
+function bar(x,y,w,hh,r,up){ if(hh<=0) return ""; r=Math.min(r,hh);
+  return up ? `M${x},${y+hh}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+hh}Z` : `M${x},${y}V${y+hh-r}Q${x},${y+hh} ${x+r},${y+hh}H${x+w-r}Q${x+w},${y+hh} ${x+w},${y+hh-r}V${y}Z`; }
+function hit(n,xf,tip){ const w=(W-PL-PR)/n; let s=""; for(let i=0;i<n;i++) s+=`<rect x="${xf(i)-w/2}" y="${PT}" width="${w}" height="${H-PT-PB}" fill="#000" fill-opacity="0" data-tip="${esc(tip(i))}" data-x="${xf(i)}" data-y="${PT}"/>`; return s; }
+function tips(plot, vw, point){
+  vw = vw || W;
+  const box = plot.parentElement; let tipEl = box.querySelector(".tip");
+  if(!tipEl){ tipEl=document.createElement("div"); tipEl.className="tip"; tipEl.hidden=true; box.appendChild(tipEl); }
+  const svg = plot.querySelector("svg");
+  svg.querySelectorAll("[data-tip]").forEach(el=>{
+    const show=()=>{ const bb=svg.getBoundingClientRect(), bx=box.getBoundingClientRect(), sc=bb.width/vw;
+      tipEl.innerHTML=el.dataset.tip; tipEl.hidden=false;
+      const left=bb.left-bx.left+parseFloat(el.dataset.x)*sc;
+      tipEl.style.left=Math.min(Math.max(left,90),bx.width-90)+"px";
+      tipEl.style.top=(bb.top-bx.top+parseFloat(el.dataset.y)*sc-8)+"px"; };
+    el.addEventListener("pointerenter",show); el.addEventListener("pointerdown",show);
+    el.addEventListener("pointerleave",()=>tipEl.hidden=true);
+    if(point && el.dataset.href) el.addEventListener("click",()=>{ const a=document.createElement("a"); a.href=el.dataset.href; a.target="_blank"; a.rel="noopener"; a.click(); });
+  });
+}
+
+// ---------- events
+document.addEventListener("click", e=>{
+  const tab = e.target.closest(".tab");
+  if(tab){ S.view=tab.dataset.view; try{ history.replaceState(null,"","#"+S.view); }catch(_){}; render(); window.scrollTo({top:0}); return; }
+  const rb = e.target.closest("[data-range]"); if(rb){ S.range=rb.dataset.range; store.set("range",S.range); render(); return; }
+  const lb = e.target.closest("[data-lh]"); if(lb){ S.lh=lb.dataset.lh; store.set("lh",S.lh); render(); return; }
+  const mo = e.target.closest("[data-more]"); if(mo){ const id=mo.dataset.more; S.shown[id]=(S.shown[id]||PAGE)+PAGE; render(); return; }
+  const m = e.target.closest("[data-m]"); if(m){ toggleArr(S.F.models, m.dataset.m); afterF(); return; }
+  const b = e.target.closest("[data-b]"); if(b){ toggleArr(S.F.bodies, b.dataset.b); afterF(); return; }
+  const p = e.target.closest("[data-p]"); if(p){ toggleArr(S.F.plats, p.dataset.p); afterF(); return; }
+  const sg = e.target.closest("[data-k]"); if(sg){ S.F[sg.dataset.k]=sg.dataset.v; afterF(); return; }
+  const pr = e.target.closest("tr[data-plat]"); if(pr){ S.F.plats=[pr.dataset.plat]; S.view="markt"; afterF(); return; }
+  const mr = e.target.closest("tr[data-model]"); if(mr){ S.F.models=[mr.dataset.model]; S.F.bodies=[mr.dataset.body]; S.view="markt"; afterF(); window.scrollTo({top:0}); return; }
+  const eq = e.target.closest("[data-eq]"); if(eq){ toggleArr(S.pc.equip, eq.dataset.eq); eq.setAttribute("aria-pressed", String(S.pc.equip.includes(eq.dataset.eq))); savePC(); return; }
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target.matches("tr[tabindex]")) e.target.click(); });
+function toggleArr(a,v){ const i=a.indexOf(v); if(i>=0) a.splice(i,1); else a.push(v); }
+function afterF(){ saveF(); S.shown={}; buildCriteria(); render(); }
+$("critToggle").addEventListener("click", ()=>{ const b=$("critBody"); b.hidden=!b.hidden; $("critToggle").setAttribute("aria-expanded", String(!b.hidden)); });
+$("critReset").addEventListener("click", ()=>{ S.F = JSON.parse(JSON.stringify(DEF_F)); afterF(); });
+$("fNoDamage").addEventListener("click", ()=>{ S.F.noDamage=!S.F.noDamage; afterF(); });
+$("fHasPrice").addEventListener("click", ()=>{ S.F.hasPrice=!S.F.hasPrice; afterF(); });
+[["fMaxPrice","maxPrice"],["fMinYear","minYear"],["fMaxKm","maxKm"]].forEach(([id,k])=>$(id).addEventListener("input", e=>{ S.F[k]=e.target.value; saveF(); S.shown={}; render(); }));
+$("sortMarkt").addEventListener("change", e=>{ S.sort=e.target.value; store.set("sort",S.sort); S.shown={}; render(); });
+function savePC(){ store.set("pc", S.pc); renderPC(); }
+[["pcModel","model"],["pcBody","body"],["pcYear","year"],["pcAppr","appr"]].forEach(([id,k])=>$(id).addEventListener("change", e=>{ S.pc[k]=e.target.value; savePC(); }));
+[["pcKm","km"],["pcPrice","price"]].forEach(([id,k])=>$(id).addEventListener("input", e=>{ S.pc[k]=e.target.value; savePC(); }));
+$("pcForm").addEventListener("submit", e=>e.preventDefault());
+
+// ---------- Beispieldaten (nur wenn keine echte data.json erreichbar ist)
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; let x=Math.imul(seed^seed>>>15,1|seed); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
+function sampleData(){
+  const R = rng(911), pick = a => a[Math.floor(R()*a.length)];
+  const MODELS = [["Basis","Limousine",88000,.16],["4","Cross Turismo",98000,.12],["4S","Limousine",108000,.22],["4S","Cross Turismo",112000,.1],["4S","Sport Turismo",114000,.05],
+    ["GTS","Limousine",135000,.1],["GTS","Sport Turismo",138000,.05],["Turbo","Limousine",155000,.08],["Turbo","Cross Turismo",158000,.03],["Turbo S","Limousine",190000,.07],["Basis","Sport Turismo",90000,.02]];
+  const pickM = () => { let x=R(), a=0; for(const m of MODELS){ a+=m[3]; if(x<a) return m; } return MODELS[0]; };
+  const EQK = Object.keys(EQUIP_DEFAULT);
+  const VAL = {perf_batt:.05,pano:.012,hal:.02,luft:.025,bose:.008,burmester:.025,hud:.012,innodrive:.015,matrix:.012,chrono:.01,beifahrer:.01,massage:.012,belueftung:.008,ahk:.006,lader22:.004,waermepumpe:.005,kamera360:.006,keramik:.03,sportdesign:.008,pdcc:.015};
+  const PL = [["mobile",.4],["autoscout",.33],["kleinanzeigen",.15],["porsche",.08],["ebay",.04]];
+  const plat = () => { let x=R(), a=0; for(const [p,w] of PL){ a+=w; if(x<a) return p; } return "mobile"; };
+  const now = Date.now(), nowY = new Date().getFullYear();
+  const mk = (firstAgoH, removedAgoH, baseline) => {
+    const [model, body, base] = pickM(), p = plat();
+    const year = Math.min(nowY, 2020 + Math.floor(R()*6)); const age = Math.max(.3, nowY + .8 - year);
+    const km = Math.max(1500, Math.round((age*14500 + (R()-.5)*16000)/500)*500);
+    const equip = EQK.filter(k=>R() < ({pano:.55,bose:.4,matrix:.5,hud:.3,luft:.6,perf_batt:.45,hal:.3,innodrive:.25,kamera360:.5,chrono:.35}[k]||.15));
+    let fair = base * Math.pow(.85, age) * (1 - km/10000*.009); equip.forEach(k=>fair*=1+VAL[k]);
+    const appr = p==="porsche" ? "ja" : R()<.62 ? "ja" : R()<.4 ? "wahrscheinlich" : R()<.6 ? "unbekannt" : "nein";
+    const seller = p==="porsche" || appr!=="unbekannt" ? "händler" : (R()<.5?"privat":"händler");
+    const price = Math.round(fair*(.9+R()*.22)/100)*100 + (appr==="ja"?1500:0);
+    const vat = seller==="privat" ? "nein" : R()<.7 ? "ja" : R()<.5 ? "wahrscheinlich" : "unbekannt";
+    const t0 = new Date(now - firstAgoH*36e5).toISOString();
+    const r = {key:p+":s"+Math.floor(R()*1e9), platform:p, model, body, year, km, ps:{"Basis":408,"4":476,"4S":530,"GTS":598,"Turbo":680,"Turbo S":761}[model],
+      title:`Porsche Taycan ${model==="Basis"?"":model+" "}${body==="Limousine"?"":body+" "}| ${equip.slice(0,3).map(k=>EQUIP_DEFAULT[k]).join(" | ")}`,
+      url:SEARCH[p], price, equip, approved:appr, vat, seller, first_seen:t0, baseline:!!baseline, prices:[[t0,price]],
+      description: appr==="ja" ? `Porsche Approved Garantie bis ${String(1+Math.floor(R()*12)).padStart(2,"0")}/${2027+Math.floor(R()*2)} · Scheckheft Porsche Zentrum · unfallfrei · ${vat==="ja"?"MwSt. ausweisbar":""}` : "Gepflegtes Fahrzeug, Nichtraucher, Winterräder.",
+      damage: R()<.08 ? "vorschaden" : "unfallfrei"};
+    if(appr==="ja") r.approved_until = `${String(1+Math.floor(R()*12)).padStart(2,"0")}/${2027+Math.floor(R()*2)}`;
+    if(R()<.4) r.soh = 86 + Math.floor(R()*12);
+    if(R()<.16){ const np = price - Math.round((1000+R()*4000)/500)*500; r.prices.push([new Date(now-firstAgoH*18e5).toISOString(), np]); r.price=np; }
+    if(removedAgoH!==null){ r.removed = new Date(now-removedAgoH*36e5).toISOString(); r.gone_reason="nicht mehr in der Suche"; }
+    return r;
   };
-  const S = {
-    view: "uebersicht", range: store.get("range","today"),
-    fNew: "all", fSold: "all", data: null, status: null, sample: false
-  };
-  const h = location.hash.replace("#","");
-  if(["uebersicht","neu","verkauft"].includes(h)) S.view = h;
+  const hT = Math.max(.6, new Date().getHours() + new Date().getMinutes()/60 - .2);
+  const active=[], removed=[];
+  for(let i=0;i<150;i++) active.push(mk(24*(31+R()*60), null, true));
+  for(let i=0;i<5;i++) active.push(mk(Math.max(.2,R()*hT), null, false));
+  for(let i=0;i<16;i++) active.push(mk(24*(1+R()*6), null, false));
+  for(let i=0;i<22;i++) active.push(mk(24*(7+R()*23), null, false));
+  for(let i=0;i<3;i++) removed.push(mk(24*(3+R()*20), Math.max(.1,R()*hT*.8), false));
+  for(let i=0;i<12;i++){ const rem=24*(1+R()*6); removed.push(mk(rem+24*(2+R()*30), rem, R()<.4)); }
+  for(let i=0;i<20;i++){ const rem=24*(7+R()*22); removed.push(mk(rem+24*(3+R()*40), rem, R()<.4)); }
+  const twin = Object.assign({}, active[160], {key:"x:twin", platform: active[160].platform==="mobile"?"autoscout":"mobile"});
+  twin.url = SEARCH[twin.platform]; active[160].also=[twin.platform]; twin.also=[active[160].platform]; active.push(twin);
+  const history={}; const lv=[]; let level=active.length;
+  for(let i=0;i<30;i++){ lv[i]=level; level=Math.round(level-(R()-.45)*5); }
+  for(let i=29;i>=0;i--){ const k=dayKey(now-i*DAY), tot=lv[i]; history[k]={mobile:Math.round(tot*.4),autoscout:Math.round(tot*.33),kleinanzeigen:Math.round(tot*.15),porsche:Math.round(tot*.08)}; history[k].ebay=tot-history[k].mobile-history[k].autoscout-history[k].kleinanzeigen-history[k].porsche; }
+  return {version:3, platforms:Object.keys(NAMES).map(id=>({id,name:NAMES[id]})), equipment:EQUIP_DEFAULT, active, removed, history,
+    excluded:[{key:"kleinanzeigen:x", title:"Panamera 4S Sport Turismo – suche Taycan", url:SEARCH.kleinanzeigen, why:"kein Taycan"}]};
+}
+function sampleStatus(){
+  const u = new Date(Date.now()-4*6e4).toISOString(), f = new Date(Date.now()-34*6e4).toISOString();
+  return {updated:u, mode:"Schnellscan", last_full:f, pending_details:12, platforms:{
+    mobile:{ok:false,error:"HTTP 403 – Plattform blockt automatische Abrufe"}, autoscout:{ok:true,count:61}, kleinanzeigen:{ok:true,count:28}, porsche:{ok:true,count:15}, ebay:{ok:false,error:"HTTP 403 – Plattform blockt automatische Abrufe"}},
+    searches:{"Kleinanzeigen · porsche taycan":{count:26,pages:2},"Kleinanzeigen · taycan":{count:22,pages:1},"AutoScout24 · 2021":{count:18,pages:1},"AutoScout24 · 2022":{count:21,pages:2},"Porsche Finder":{count:15,pages:2},"mobile.de":{count:0,pages:0,error:"HTTP 403 – Plattform blockt automatische Abrufe"}}};
+}
 
-  // ---------- helpers
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const eur = v => v ? v.toLocaleString("de-DE") + " €" : "Preis k. A.";
-  const kmf = v => v ? v.toLocaleString("de-DE") + " km" : "–";
-  const t = s => new Date(s).getTime();
-  const DAY = 864e5;
-  function dayKey(ms){ const d = new Date(ms); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-  function rangeStart(){
-    const now = new Date();
-    if(S.range==="today") return new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    return Date.now() - parseInt(S.range,10)*DAY;
-  }
-  const rangeLabel = () => S.range==="today" ? "heute" : `in ${S.range} Tagen`;
-  function ago(ms){
-    const m = Math.round((Date.now()-ms)/6e4);
-    if(m < 1) return "gerade eben";
-    if(m < 60) return `vor ${m} Min`;
-    const hh = Math.round(m/60);
-    if(hh < 24) return `vor ${hh} Std`;
-    const d = Math.round(hh/24);
-    return d === 1 ? "gestern" : `vor ${d} Tagen`;
-  }
-  const dt = ms => new Date(ms).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) + " Uhr";
-  const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y); const m=s.length>>1; return s.length%2? s[m] : Math.round((s[m-1]+s[m])/2); };
-  function priceDrop(r){
-    const p = (r.prices||[]).map(x=>x[1]).filter(Boolean);
-    if(p.length < 2) return 0;
-    return p[0] - p[p.length-1];   // positiv = günstiger geworden
-  }
-  const daysOnline = r => Math.max(0, Math.round((t(r.removed) - t(r.first_seen))/DAY));
-
-  // ---------- data
-  async function load(){
-    try{
-      const [d, s] = await Promise.all([
-        fetch("data.json",{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.json(); }),
-        fetch("status.json",{cache:"no-store"}).then(r=> r.ok ? r.json() : null).catch(()=>null)
-      ]);
-      S.data = d; S.status = s; S.sample = false;
-    }catch(e){
-      S.data = sampleData(); S.status = sampleStatus(); S.sample = true;
-    }
-    $("sampleBanner").hidden = !S.sample;
-    render();
-  }
-
-  // ---------- render
-  function render(){
-    const d = S.data; if(!d) return;
-    const from = rangeStart();
-    const plats = (d.platforms||[]).map(p=>p.id);
-    const all = d.active.concat(d.removed);
-    const news = all.filter(r => !r.baseline && t(r.first_seen) >= from).sort((a,b)=>t(b.first_seen)-t(a.first_seen));
-    const sold = d.removed.filter(r => t(r.removed) >= from).sort((a,b)=>t(b.removed)-t(a.removed));
-
-    // status
-    const st = S.status;
-    const okN = st ? Object.values(st.platforms||{}).filter(p=>p.ok).length : 0;
-    const totN = st ? Object.keys(st.platforms||{}).length : 0;
-    $("statusText").textContent = S.sample ? "Beispieldaten" :
-      (st ? `Aktualisiert ${ago(t(st.updated))} · ${okN}/${totN} Quellen live` : "Status unbekannt");
-    $("status").classList.toggle("live", !S.sample && okN>0);
-
-    $("cNew").textContent = news.length;
-    $("cSold").textContent = sold.length;
-    document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.view===S.view)));
-    document.querySelectorAll(".rbtn").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.range===S.range)));
-    ["uebersicht","neu","verkauft"].forEach(v=> $("view-"+v).hidden = v!==S.view);
-
-    if(S.view==="uebersicht") renderOverview(d, plats, news, sold);
-    if(S.view==="neu") renderCards("listNew","fNew", news, false, plats);
-    if(S.view==="verkauft") renderCards("listSold","fSold", sold, true, plats);
-  }
-
-  function renderOverview(d, plats, news, sold){
-    const active = d.active;
-    // unique vehicles: same car on several platforms counts once
-    const seen = new Set(); let unique = 0;
-    active.forEach(r=>{
-      if(r.also && r.also.length){
-        const fp = [r.year, r.price, Math.round((r.km||0)/1000)].join("|");
-        if(seen.has(fp)) return; seen.add(fp);
-      }
-      unique++;
-    });
-    const soldDays = sold.map(daysOnline);
-    const avgDays = soldDays.length ? Math.round(soldDays.reduce((a,b)=>a+b,0)/soldDays.length) : null;
-    const medPrice = median(active.map(r=>r.price).filter(Boolean));
-
-    $("kpis").innerHTML = `
-      <div class="kpi"><div class="l">Im Markt</div><div class="v num">${active.length}</div><div class="s">${unique} verschiedene Autos</div></div>
-      <div class="kpi up"><div class="l">Neu ${rangeLabel()}</div><div class="v num"><span class="sign">+</span>${news.length}</div><div class="s">${news.filter(r=>r.removed).length} davon schon wieder weg</div></div>
-      <div class="kpi"><div class="l">Verkauft ${rangeLabel()}</div><div class="v num"><span class="sign">−</span>${sold.length}</div><div class="s">Inserat offline</div></div>
-      <div class="kpi"><div class="l">Ø Standzeit</div><div class="v num">${avgDays ?? "–"}<small>${avgDays!==null?"Tage":""}</small></div><div class="s">${medPrice ? "Median-Preis " + eur(medPrice) : "der verkauften Autos"}</div></div>`;
-
-    // ledger
-    const st = (S.status && S.status.platforms) || {};
-    let rows = "", tA=0,tN=0,tS=0;
-    plats.forEach(pid=>{
-      const a = active.filter(r=>r.platform===pid);
-      const n = news.filter(r=>r.platform===pid).length;
-      const s = sold.filter(r=>r.platform===pid).length;
-      const mp = median(a.map(r=>r.price).filter(Boolean));
-      tA+=a.length; tN+=n; tS+=s;
-      const ps = st[pid];
-      const chip = !ps ? `<span class="chip">–</span>` : ps.ok
-        ? `<span class="chip"><i></i>Live</span>`
-        : `<span class="chip off" title="${esc(ps.error||"")}"><i></i>Blockiert</span>`;
-      rows += `<tr><td class="p">${esc(NAMES[pid]||pid)}</td><td>${chip}</td><td class="big">${a.length}</td>
-        <td class="plus">${n?"+"+n:"0"}</td><td class="minus">${s?"−"+s:"0"}</td><td>${mp?eur(mp):"–"}</td></tr>`;
-    });
-    $("ledger").innerHTML = `<thead><tr><th>Plattform</th><th>Status</th><th>Im Markt</th><th>Neu</th><th>Verkauft</th><th>Median-Preis</th></tr></thead>
-      <tbody>${rows}<tr class="total"><td>Gesamt</td><td></td><td class="big">${tA}</td><td class="plus">+${tN}</td><td class="minus">−${tS}</td><td>${medPrice?eur(medPrice):"–"}</td></tr></tbody>`;
-
-    // charts
-    const days = [];
-    const today0 = new Date(); today0.setHours(0,0,0,0);
-    for(let i=13;i>=0;i--) days.push(dayKey(today0.getTime() - i*DAY));
-    const hist = d.history || {};
-    const stock = days.map(k => { const v = hist[k]; return v ? Object.values(v).reduce((a,b)=>a+b,0) : null; });
-    const all = d.active.concat(d.removed);
-    const inn = days.map(k => all.filter(r=>!r.baseline && dayKey(t(r.first_seen))===k).length);
-    const out = days.map(k => d.removed.filter(r=>dayKey(t(r.removed))===k).length);
-    drawStock($("chartStock"), days, stock);
-    drawFlow($("chartFlow"), days, inn, out);
-
-    // pulse
-    const cheapest = active.filter(r=>r.price).sort((a,b)=>a.price-b.price)[0];
-    const fastest = d.removed.filter(r=>!r.baseline).sort((a,b)=>daysOnline(a)-daysOnline(b))[0];
-    const dropped = active.filter(r=>priceDrop(r)>0).sort((a,b)=>priceDrop(b)-priceDrop(a))[0];
-    const pc = (label, val, r, link) => r
-      ? `<a class="pcard" href="${esc(link||r.url)}" target="_blank" rel="noopener"><span class="l">${label}</span><span class="v num">${val}</span><span class="t">${esc(r.title)} · ${esc(NAMES[r.platform]||r.platform)}</span></a>`
-      : `<div class="pcard"><span class="l">${label}</span><span class="v">–</span><span class="t">Noch keine Daten</span></div>`;
-    $("pulse").innerHTML =
-      pc("Günstigster im Markt", cheapest?eur(cheapest.price):"", cheapest) +
-      pc("Schnellster Verkauf", fastest? daysOnline(fastest)+" Tage" : "", fastest) +
-      pc("Größte Preissenkung", dropped? "−"+eur(priceDrop(dropped)) : "", dropped);
-  }
-
-  // ---------- charts (SVG, one axis each)
-  function axisMax(v){ const m = Math.max(1,...v); const step = Math.pow(10, Math.floor(Math.log10(m))); return Math.ceil(m/step)*step; }
-  const W = 480, H = 200, PL = 34, PR = 40, PT = 16, PB = 26;
-  const short = k => { const [y,m,d]=k.split("-"); return `${d}.${m}.`; };
-
-  function drawStock(box, days, vals){
-    const plot = box.querySelector(".plot");
-    const real = vals.filter(v=>v!==null);
-    if(!real.length){ plot.innerHTML = `<div class="empty"><b>Noch kein Verlauf</b>Erscheint nach dem ersten Tag.</div>`; return; }
-    const lo = Math.max(0, Math.floor(Math.min(...real)*0.9/10)*10), hi = Math.ceil(Math.max(...real)*1.05/10)*10 || 10;
-    const x = i => PL + i*(W-PL-PR)/(days.length-1);
-    const y = v => PT + (H-PT-PB) * (1 - (v-lo)/((hi-lo)||1));
-    let grid = "", ticks = 4;
-    for(let i=0;i<=ticks;i++){ const v = lo + (hi-lo)*i/ticks; grid += `<line x1="${PL}" x2="${W-PR}" y1="${y(v)}" y2="${y(v)}" stroke="var(--hair)" stroke-width="1"/><text x="${PL-8}" y="${y(v)+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${Math.round(v)}</text>`; }
-    const pts = vals.map((v,i)=> v===null? null : [x(i), y(v)]);
-    const segs = []; let cur = [];
-    pts.forEach(p=>{ if(p) cur.push(p); else if(cur.length){ segs.push(cur); cur=[]; } }); if(cur.length) segs.push(cur);
-    const line = segs.map(s=>"M"+s.map(p=>p.join(",")).join("L")).join("");
-    const area = segs.map(s=>`M${s[0][0]},${H-PB}L`+s.map(p=>p.join(",")).join("L")+`L${s[s.length-1][0]},${H-PB}Z`).join("");
-    const lastI = vals.map((v,i)=>v!==null?i:-1).filter(i=>i>=0).pop();
-    const labels = days.map((k,i)=> (i%3===0 || i===days.length-1) ? `<text x="${x(i)}" y="${H-8}" text-anchor="middle" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${i===days.length-1?"Heute":short(k)}</text>` : "").join("");
-    plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Inserate im Markt, letzte 14 Tage">
-      <defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f5f3" stop-opacity=".22"/><stop offset="1" stop-color="#f5f5f3" stop-opacity="0"/></linearGradient></defs>
-      ${grid}<path d="${area}" fill="url(#gs)"/><path d="${line}" fill="none" stroke="var(--white)" stroke-width="2" stroke-linejoin="round"/>
-      <circle cx="${x(lastI)}" cy="${y(vals[lastI])}" r="4.5" fill="var(--white)" stroke="var(--black)" stroke-width="2"/>
-      <text x="${x(lastI)+9}" y="${y(vals[lastI])+4}" text-anchor="start" fill="var(--white)" font-size="12" font-weight="600" font-family="var(--f-display)">${vals[lastI]}</text>
-      ${labels}${hitLayer(days.length, x, i=>`<b>${i===days.length-1?"Heute":short(days[i])}</b><br>${vals[i]===null?"keine Messung":vals[i]+" Inserate"}`)}
-    </svg>`;
-    bindTips(plot);
-  }
-
-  function drawFlow(box, days, inn, out){
-    const plot = box.querySelector(".plot");
-    const m = axisMax(inn.concat(out));
-    const mid = PT + (H-PT-PB)/2;
-    const half = (H-PT-PB)/2;
-    const bw = (W-PL-PR)/days.length;
-    const x = i => PL + i*bw;
-    const yUp = v => mid - half*v/m, yDn = v => mid + half*v/m;
-    let g = `<line x1="${PL}" x2="${W-PR}" y1="${mid}" y2="${mid}" stroke="var(--hair-strong)" stroke-width="1"/>`;
-    g += `<line x1="${PL}" x2="${W-PR}" y1="${PT}" y2="${PT}" stroke="var(--hair)"/><line x1="${PL}" x2="${W-PR}" y1="${H-PB}" y2="${H-PB}" stroke="var(--hair)"/>`;
-    g += `<text x="${PL-8}" y="${PT+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">+${m}</text><text x="${PL-8}" y="${mid+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">0</text><text x="${PL-8}" y="${H-PB+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">−${m}</text>`;
-    const w = Math.max(4, bw*0.56), r = Math.min(3, w/2);
-    days.forEach((k,i)=>{
-      const cx = x(i) + (bw-w)/2;
-      if(inn[i]){ const top = yUp(inn[i]); g += `<path d="${roundBar(cx, top, w, mid-top-1, r, true)}" fill="var(--up)"/>`; }
-      if(out[i]){ const bot = yDn(out[i]); g += `<path d="${roundBar(cx, mid+1, w, bot-mid-1, r, false)}" fill="var(--down)"/>`; }
-      if(i%3===0 || i===days.length-1) g += `<text x="${x(i)+bw/2}" y="${H-8}" text-anchor="middle" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${i===days.length-1?"Heute":short(k)}</text>`;
-    });
-    plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Neue und verkaufte Inserate je Tag">${g}
-      ${hitLayer(days.length, i=>x(i)+bw/2, i=>`<b>${i===days.length-1?"Heute":short(days[i])}</b><br>+${inn[i]} neu · −${out[i]} verkauft`)}</svg>`;
-    bindTips(plot);
-  }
-  function roundBar(x, y, w, hgt, r, up){
-    if(hgt <= 0) return "";
-    r = Math.min(r, hgt);
-    return up
-      ? `M${x},${y+hgt}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+hgt}Z`
-      : `M${x},${y}V${y+hgt-r}Q${x},${y+hgt} ${x+r},${y+hgt}H${x+w-r}Q${x+w},${y+hgt} ${x+w},${y+hgt-r}V${y}Z`;
-  }
-  function hitLayer(n, xf, tip){
-    const w = (W-PL-PR)/n;
-    let s = "";
-    for(let i=0;i<n;i++){ s += `<rect x="${xf(i)-w/2}" y="${PT}" width="${w}" height="${H-PT-PB}" fill="#000" fill-opacity="0" data-tip="${esc(tip(i))}" data-x="${xf(i)}"/>`; }
-    return s;
-  }
-  function bindTips(plot){
-    const box = plot.parentElement;
-    let tipEl = box.querySelector(".tip");
-    if(!tipEl){ tipEl = document.createElement("div"); tipEl.className="tip"; tipEl.hidden = true; box.appendChild(tipEl); }
-    const svg = plot.querySelector("svg");
-    svg.querySelectorAll("rect[data-tip]").forEach(r=>{
-      const show = ()=>{
-        const bb = svg.getBoundingClientRect(), bx = box.getBoundingClientRect();
-        const scale = bb.width / W;
-        tipEl.innerHTML = r.dataset.tip;
-        tipEl.hidden = false;
-        const left = bb.left - bx.left + parseFloat(r.dataset.x)*scale;
-        tipEl.style.left = Math.min(Math.max(left, 60), bx.width-60) + "px";
-        tipEl.style.top = (bb.top - bx.top + PT*scale - 4) + "px";
-      };
-      r.addEventListener("pointerenter", show);
-      r.addEventListener("pointerdown", show);
-      r.addEventListener("pointerleave", ()=> tipEl.hidden = true);
-    });
-  }
-
-  // ---------- cards
-  function renderCards(listId, filterKey, items, sold, plats){
-    const counts = {all: items.length}; plats.forEach(p=>counts[p] = items.filter(r=>r.platform===p).length);
-    const fsel = S[filterKey];
-    $(filterKey).innerHTML = ["all"].concat(plats).map(p=>
-      `<button class="fchip" type="button" data-f="${p}" aria-pressed="${p===fsel}">${p==="all"?"Alle":esc(NAMES[p]||p)}<span class="c">${counts[p]||0}</span></button>`).join("");
-    const list = items.filter(r=> fsel==="all" || r.platform===fsel);
-    const el = $(listId);
-    if(!list.length){
-      el.innerHTML = `<div class="empty" style="grid-column:1/-1"><b>${sold?"Keine Verkäufe":"Keine neuen Autos"} ${rangeLabel()}</b>${S.range==="30"?"Der Bot meldet sich, sobald sich etwas tut.":"Stell oben einen längeren Zeitraum ein."}</div>`;
-      return;
-    }
-    el.innerHTML = list.map(r => card(r, sold)).join("");
-    el.querySelectorAll("img[data-fallback]").forEach(img=>{
-      img.addEventListener("error", ()=>{ img.remove(); }, {once:true});
-    });
-  }
-  function card(r, sold){
-    const name = NAMES[r.platform] || r.platform;
-    const drop = priceDrop(r);
-    const firstPrice = (r.prices && r.prices[0] && r.prices[0][1]) || r.price;
-    const badges = [];
-    if(drop > 0) badges.push(`<span class="badge drop">Preis −${eur(drop)}</span>`);
-    if(drop < 0) badges.push(`<span class="badge soft">Preis +${eur(-drop)}</span>`);
-    (r.also||[]).forEach(p=> badges.push(`<span class="badge soft">auch auf ${esc(NAMES[p]||p)}</span>`));
-    if(!sold && r.removed) badges.push(`<span class="badge soft">schon wieder offline</span>`);
-    const img = r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fallback>` : "";
-    const when = sold ? `offline ${ago(t(r.removed))}` : ago(t(r.first_seen));
-    const facts = sold
-      ? `<div><div class="l">Standzeit</div><div class="v">${r.baseline?"≥ ":""}${daysOnline(r)} Tage</div></div>
-         <div><div class="l">Offline seit</div><div class="v">${dt(t(r.removed)).replace(" Uhr","")}</div></div>
-         <div><div class="l">Startpreis</div><div class="v">${firstPrice?eur(firstPrice):"–"}</div></div>`
-      : `<div><div class="l">EZ</div><div class="v">${r.year||"–"}</div></div>
-         <div><div class="l">Laufleistung</div><div class="v">${kmf(r.km)}</div></div>
-         <div><div class="l">Entdeckt</div><div class="v">${dt(t(r.first_seen)).replace(" Uhr","")}</div></div>`;
-    return `<article class="car${sold?" sold":""}">
-      <div class="shot"><div class="ph">${CAR_SVG}</div>${img}<span class="ptag">${esc(name)}</span><span class="when">${when}</span></div>
-      <div class="cbody">
-        <h3 class="ctitle">${esc(r.title||"Porsche Taycan")}</h3>
-        <div class="cprice"><span class="pr num">${eur(r.price)}</span><span class="meta">${sold ? "letzter Preis" : (r.year?"EZ "+r.year+" · ":"")+kmf(r.km)}</span></div>
-        ${r.snippet ? `<p class="snip">${esc(r.snippet)}</p>` : ""}
-        ${badges.length ? `<div class="badges">${badges.join("")}</div>` : ""}
-        <div class="facts">${facts}</div>
-        <a class="go${sold?" ghost":""}" href="${esc(r.url)}" target="_blank" rel="noopener">${sold?"Letztes Inserat ansehen":"Inserat öffnen"}
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        ${sold ? `<p class="note">Die Seite ist evtl. schon gelöscht</p>` : ""}
-      </div></article>`;
-  }
-
-  // ---------- events
-  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>{
-    S.view = b.dataset.view;
-    try{ history.replaceState(null,"","#"+S.view); }catch(e){}
-    render();
-  }));
-  document.querySelectorAll(".rbtn").forEach(b=>b.addEventListener("click", ()=>{ S.range = b.dataset.range; store.set("range",S.range); render(); }));
-  ["fNew","fSold"].forEach(k=> $(k).addEventListener("click", e=>{
-    const b = e.target.closest("[data-f]"); if(!b) return; S[k] = b.dataset.f; render();
-  }));
-
-  // ---------- Beispieldaten (nur wenn keine echte data.json erreichbar ist)
-  function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; let x = Math.imul(seed ^ seed >>> 15, 1 | seed); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
-  function sampleData(){
-    const R = rng(911);
-    const pick = a => a[Math.floor(R()*a.length)];
-    const MODELS = [
-      ["Taycan 4S", 2020, 56000], ["Taycan 4S", 2021, 63000], ["Taycan 4S", 2022, 72000], ["Taycan 4S", 2023, 79000],
-      ["Taycan GTS", 2022, 84000], ["Taycan GTS Sport Turismo", 2023, 92000], ["Taycan Turbo", 2021, 78000],
-      ["Taycan Turbo S", 2022, 99000], ["Taycan", 2021, 55000], ["Taycan", 2024, 84000], ["Taycan 4S", 2024, 99000],
-      ["Taycan 4 Cross Turismo", 2022, 71000], ["Taycan 4S Cross Turismo", 2022, 79000], ["Taycan Sport Turismo", 2023, 74000]
-    ];
-    const EXTRAS = ["Performancebatterie Plus","Panorama","Bose","Burmester","Matrix-LED","Hinterachslenkung","Sport Chrono","InnoDrive","Beifahrerdisplay","Luftfederung","22-kW-Lader","Head-up","Sitzbelüftung","Wärmepumpe"];
-    const SNIP = [
-      "Porsche Approved Garantie bis {m}/{y} · MwSt. ausweisbar · Scheckheft Porsche Zentrum",
-      "Porsche Approved · 1. Hand · unfallfrei · MwSt. ausweisbar · Batterie-SoH 94 %",
-      "Approved Garantie 24 Monate · Leasingrückläufer · MwSt. ausweisbar · Wartung neu",
-      "Porsche Approved · Nichtraucher · Winterräder auf Felge · MwSt. ausweisbar"
-    ];
-    const PL = [["mobile",.42],["autoscout",.33],["kleinanzeigen",.15],["ebay",.10]];
-    const plat = () => { let x = R(), acc = 0; for(const [p,w] of PL){ acc += w; if(x < acc) return p; } return "mobile"; };
-    const now = Date.now();
-    const mk = (firstAgoH, removedAgoH, baseline) => {
-      const [model, year, base] = pick(MODELS);
-      const p = plat();
-      const price = Math.round((base * (0.92 + R()*0.18))/100)*100;
-      const km = Math.round(((2026-year)*13500 + (R()-.5)*12000) / 500)*500 + 3000;
-      const ex = [...EXTRAS].sort(()=>R()-.5).slice(0,3);
-      const title = `Porsche ${model} ${ex.join(" | ")}`;
-      const r = {key:p+":s"+Math.floor(R()*1e9), platform:p, title, url:SEARCH[p], price, year, km,
-        snippet: pick(SNIP).replace("{m}", String(1+Math.floor(R()*12)).padStart(2,"0")).replace("{y}", 2027+Math.floor(R()*2)),
-        first_seen: new Date(now - firstAgoH*36e5).toISOString(), baseline: !!baseline, prices: [[new Date(now-firstAgoH*36e5).toISOString(), price]]};
-      if(R() < .14){ const np = price - Math.round((1000+R()*4000)/500)*500; r.prices.push([new Date(now-firstAgoH*18e5).toISOString(), np]); r.price = np; }
-      if(removedAgoH !== null) r.removed = new Date(now - removedAgoH*36e5).toISOString();
-      return r;
-    };
-    const hoursToday = new Date().getHours() + new Date().getMinutes()/60;
-    const active = [], removed = [];
-    for(let i=0;i<88;i++) active.push(mk(24*(31+R()*40), null, true));
-    for(let i=0;i<4;i++) active.push(mk(Math.max(.2, R()*Math.max(hoursToday-.2,.5)), null, false));
-    for(let i=0;i<9;i++) active.push(mk(24*(1+R()*6), null, false));
-    for(let i=0;i<14;i++) active.push(mk(24*(7+R()*23), null, false));
-    for(let i=0;i<2;i++) removed.push(mk(24*(4+R()*20), Math.max(.1, R()*Math.max(hoursToday-.2,.4)), false));
-    for(let i=0;i<7;i++){ const rem = 24*(1+R()*6); removed.push(mk(rem + 24*(2+R()*25), rem, R()<.5)); }
-    for(let i=0;i<13;i++){ const rem = 24*(7+R()*22); removed.push(mk(rem + 24*(3+R()*30), rem, R()<.5)); }
-    // gleiches Auto auf zwei Plattformen
-    const twin = Object.assign({}, active[90], {key:"autoscout:twin", platform:"autoscout", url:SEARCH.autoscout});
-    if(active[90].platform === "autoscout"){ twin.platform="mobile"; twin.key="mobile:twin"; twin.url=SEARCH.mobile; }
-    active[90].also = [twin.platform]; twin.also = [active[90].platform]; active.push(twin);
-    // Verlauf
-    const history = {}; const levels = []; let level = active.length;
-    for(let i=0;i<30;i++){ levels[i] = level; level = Math.round(level - (R()-.45)*4); }
-    for(let i=29;i>=0;i--){
-      const k = dayKey(now - i*DAY);
-      const tot = levels[i];
-      history[k] = {mobile: Math.round(tot*.42), autoscout: Math.round(tot*.33), kleinanzeigen: Math.round(tot*.15)};
-      history[k].ebay = tot - history[k].mobile - history[k].autoscout - history[k].kleinanzeigen;
-    }
-    return {version:2, platforms:Object.keys(NAMES).map(id=>({id, name:NAMES[id]})), active, removed, history};
-  }
-  function sampleStatus(){
-    const now = new Date(Date.now()-4*6e4).toISOString();
-    return {updated: now, platforms:{
-      mobile:{ok:false, error:"HTTP 403 – Plattform blockt automatische Abrufe"},
-      autoscout:{ok:true}, kleinanzeigen:{ok:true}, ebay:{ok:true}}};
-  }
-
-  load();
-  // Live-Version: alle 5 Minuten neue Daten holen
-  setInterval(()=>{ if(!S.sample) load(); else render(); }, 5*6e4);
+window.addEventListener("hashchange", ()=>{ const h=location.hash.replace("#",""); if(TABS.some(x=>x[0]===h) && h!==S.view){ S.view=h; render(); } });
+load();
+setInterval(()=>{ if(!S.sample) load(); }, 5*6e4);
 })();
 </script>
 
