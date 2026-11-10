@@ -1,0 +1,679 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Taycan Radar">
+<meta name="theme-color" content="#050505">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+<title>Taycan Radar Markt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Taycan Radar">
+<meta name="theme-color" content="#050505">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Approved-Edition look – black lacquer, white hairlines, light-bar. Header → tabs → range; Übersicht = KPI strip, platform ledger, two small charts, market pulse; Neu/Verkauft = vehicle cards with preview. Single dark theme by choice. */
+:root{
+  color-scheme: dark;
+  --black:#050505;
+  --panel:#0d0d0e;
+  --raise:#161618;
+  --white:#f5f5f3;
+  --grey:#8a8a8c;
+  --dim:#5a5a5c;
+  --hair:rgba(245,245,243,.12);
+  --hair-strong:rgba(245,245,243,.32);
+  --glow:rgba(255,255,255,.55);
+  --up:#cfe9db;        /* Zugang – sehr helles Grün, bleibt im Schwarz-Weiß-Look */
+  --down:#8a8a8c;      /* Abgang – Grau */
+  --warn:#e8c98a;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--black)}
+body{
+  background:var(--black);color:var(--white);
+  font-family:var(--f-display);font-stretch:100%;font-size:15px;line-height:1.5;
+  background-image:radial-gradient(1200px 500px at 50% -20%, rgba(255,255,255,.06), transparent 60%);
+}
+.wrap{
+  max-width:1080px;margin:0 auto;
+  padding-block:30px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:26px;
+}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Header ---------- */
+header{display:flex;flex-direction:column;gap:18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:16px}
+.lamps{display:grid;grid-template-columns:repeat(2,7px);gap:4px;padding:8px;border:1px solid var(--hair-strong);border-radius:14px}
+.lamps i{width:7px;height:7px;border-radius:2px;background:var(--white);box-shadow:0 0 8px var(--glow)}
+h1{margin:0;font-weight:300;font-stretch:125%;letter-spacing:.32em;text-transform:uppercase;font-size:clamp(18px,4.6vw,28px);line-height:1.1}
+h1 b{font-weight:700}
+.eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);margin-top:6px}
+.status{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--grey);display:flex;align-items:center;gap:10px;text-align:right}
+.status .led{width:6px;height:6px;border-radius:50%;background:var(--grey);flex:none}
+.status.live{color:var(--white)}
+.status.live .led{background:var(--white);box-shadow:0 0 10px var(--white);animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{50%{opacity:.3}}
+.lightbar{height:2px;border-radius:2px;position:relative;overflow:hidden;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25) 12%,rgba(255,255,255,.25) 88%,transparent)}
+.lightbar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,#fff 50%,transparent 100%);transform:translateX(-100%);animation:run 4.5s cubic-bezier(.6,0,.2,1) infinite}
+@keyframes run{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+.banner{
+  display:flex;gap:12px;align-items:flex-start;border:1px dashed var(--hair-strong);border-radius:4px;
+  padding:12px 14px;font-size:13px;color:var(--grey);
+}
+.banner b{color:var(--white);font-weight:600}
+.banner .tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--white);color:var(--white);padding:2px 7px;border-radius:3px;flex:none;margin-top:1px}
+
+/* ---------- Controls ---------- */
+.controls{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.tabs{display:flex;gap:0;border:1px solid var(--hair-strong);border-radius:999px;padding:3px}
+.tab{
+  appearance:none;border:0;background:transparent;color:var(--white);cursor:pointer;
+  font:600 12px var(--f-display);font-stretch:118%;letter-spacing:.14em;text-transform:uppercase;
+  padding:10px 16px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;transition:background .2s,color .2s;
+}
+.tab .c{font-family:var(--f-mono);font-size:11px;letter-spacing:0;color:var(--grey)}
+.tab[aria-selected="true"]{background:var(--white);color:var(--black)}
+.tab[aria-selected="true"] .c{color:var(--dim)}
+.range{display:flex;gap:6px}
+.rbtn{
+  appearance:none;cursor:pointer;background:transparent;color:var(--grey);border:1px solid var(--hair);
+  font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-radius:999px;
+}
+.rbtn[aria-pressed="true"]{color:var(--white);border-color:var(--white)}
+
+.sec-title{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--grey);margin:0 0 14px;display:flex;align-items:center;gap:12px}
+.sec-title::after{content:"";flex:1;height:1px;background:var(--hair)}
+.view{display:flex;flex-direction:column;gap:30px}
+
+/* ---------- KPI strip ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--hair-strong);border-bottom:1px solid var(--hair)}
+.kpi{padding:18px 16px 16px;border-left:1px solid var(--hair);min-width:0}
+.kpi:first-child{border-left:0;padding-left:2px}
+.kpi .l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
+.kpi .v{font-weight:300;font-stretch:118%;font-size:clamp(30px,5.4vw,46px);line-height:1.1;margin-top:6px;letter-spacing:-.01em}
+.kpi .v small{font-size:.42em;font-weight:500;color:var(--grey);letter-spacing:.04em;margin-left:4px}
+.kpi .s{font-size:12px;color:var(--grey);margin-top:4px}
+.kpi.up .v{color:var(--up)}
+.sign{font-weight:200}
+
+/* ---------- Ledger ---------- */
+.ledger-wrap{overflow-x:auto}
+table.ledger{width:100%;border-collapse:collapse;min-width:560px}
+.ledger th{font-family:var(--f-mono);font-weight:400;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);text-align:right;padding:0 10px 10px;border-bottom:1px solid var(--hair-strong)}
+.ledger th:first-child,.ledger td:first-child{text-align:left;padding-left:2px}
+.ledger td{padding:15px 10px;border-bottom:1px solid var(--hair);text-align:right;font-variant-numeric:tabular-nums;font-size:15px}
+.ledger td.p{font-weight:600;font-stretch:118%;letter-spacing:.06em;text-transform:uppercase;font-size:14px;white-space:nowrap}
+.ledger td.big{font-size:20px;font-weight:300;font-stretch:112%}
+.ledger tr.total td{border-bottom:0;border-top:1px solid var(--hair-strong);color:var(--white);font-weight:600}
+.ledger .plus{color:var(--up)}
+.ledger .minus{color:var(--grey)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;padding:3px 8px;border-radius:3px;border:1px solid var(--hair-strong);white-space:nowrap}
+.chip i{width:5px;height:5px;border-radius:50%;background:var(--white)}
+.chip.off{border-color:rgba(232,201,138,.5);color:var(--warn)}
+.chip.off i{background:var(--warn)}
+
+/* ---------- Charts ---------- */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.chart{min-width:0;position:relative}
+.chart h3{margin:0 0 4px;font-weight:600;font-stretch:112%;font-size:14px;letter-spacing:.04em}
+.chart .sub{font-size:12px;color:var(--grey);margin-bottom:10px;display:flex;gap:14px;flex-wrap:wrap}
+.key{display:inline-flex;align-items:center;gap:6px}
+.key i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.tip{
+  position:absolute;pointer-events:none;background:var(--white);color:var(--black);border-radius:4px;
+  padding:7px 10px;font-size:12px;line-height:1.35;white-space:nowrap;transform:translate(-50%,-100%);
+  box-shadow:0 10px 20px -10px #000;z-index:5;
+}
+.tip b{font-weight:700}
+
+/* ---------- Pulse ---------- */
+.pulse{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pcard{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--hair);border-radius:4px;background:var(--panel);color:var(--white);text-decoration:none;min-width:0;transition:border-color .2s}
+a.pcard:hover{border-color:var(--white)}
+.pcard .l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey)}
+.pcard .v{font-weight:300;font-stretch:118%;font-size:26px;line-height:1.15}
+.pcard .t{font-size:13px;color:var(--grey);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- Cards ---------- */
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fchip{
+  font:500 11.5px var(--f-display);font-stretch:112%;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--white);background:transparent;border:1px solid var(--hair-strong);padding:8px 13px;border-radius:999px;cursor:pointer;
+}
+.fchip .c{font-family:var(--f-mono);color:var(--grey);margin-left:6px;letter-spacing:0}
+.fchip[aria-pressed="true"]{background:var(--white);color:var(--black);border-color:var(--white)}
+.fchip[aria-pressed="true"] .c{color:var(--dim)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.car{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:6px;background:var(--panel);overflow:hidden;min-width:0;transition:border-color .2s}
+.car:hover{border-color:var(--hair-strong)}
+.shot{position:relative;aspect-ratio:16/10;max-width:100%;background:linear-gradient(180deg,#141416,#0a0a0b);overflow:hidden}
+.shot img{width:100%;height:100%;object-fit:cover;display:block}
+.shot .ph{position:absolute;inset:0;display:grid;place-items:center}
+.shot .ph svg{width:62%;opacity:.5}
+.car.sold .shot img{filter:grayscale(1) brightness(.7)}
+.car.sold .shot::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(255,255,255,.035) 10px 11px)}
+.shot .ptag{position:absolute;left:10px;top:10px;z-index:2;font:600 10.5px var(--f-display);font-stretch:118%;letter-spacing:.12em;text-transform:uppercase;background:rgba(5,5,5,.78);backdrop-filter:blur(6px);border:1px solid var(--hair-strong);padding:5px 9px;border-radius:999px}
+.shot .when{position:absolute;right:10px;top:10px;z-index:2;font-family:var(--f-mono);font-size:10.5px;background:var(--white);color:var(--black);padding:4px 8px;border-radius:999px}
+.car.sold .shot .when{background:rgba(5,5,5,.78);color:var(--white);border:1px solid var(--hair-strong)}
+.cbody{display:flex;flex-direction:column;gap:10px;padding:14px 16px 16px;flex:1}
+.ctitle{font-weight:600;font-stretch:108%;font-size:15px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.cprice{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cprice .pr{font-weight:300;font-stretch:118%;font-size:26px;line-height:1}
+.cprice .meta{font-family:var(--f-mono);font-size:12px;color:var(--grey)}
+.snip{font-size:12.5px;color:var(--grey);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;padding:3px 8px;border-radius:3px;border:1px solid var(--hair-strong);color:var(--white)}
+.badge.soft{border-color:var(--hair);color:var(--grey)}
+.badge.drop{border-color:var(--up);color:var(--up)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--hair);padding-top:10px}
+.facts div{min-width:0}
+.facts .l{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey)}
+.facts .v{font-size:14px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.go{
+  margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;
+  color:var(--black);background:var(--white);border:1px solid var(--white);border-radius:999px;padding:11px 16px;
+  font:600 11.5px var(--f-display);font-stretch:118%;letter-spacing:.14em;text-transform:uppercase;transition:background .2s;
+}
+.go:hover{background:#dcdcd9}
+.go.ghost{background:transparent;color:var(--white)}
+.go.ghost:hover{background:var(--white);color:var(--black)}
+.go svg{width:14px;height:14px}
+.note{font-size:11.5px;color:var(--dim);text-align:center;margin:-4px 0 0}
+.empty{border:1px dashed var(--hair-strong);border-radius:6px;padding:34px 18px;text-align:center;color:var(--grey)}
+.empty b{display:block;color:var(--white);font-weight:600;font-stretch:112%;margin-bottom:4px}
+.explain{font-size:12.5px;color:var(--grey);margin:0;max-width:70ch}
+
+:focus-visible{outline:1px solid var(--white);outline-offset:3px}
+footer{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center}
+
+@media (max-width:760px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi:nth-child(3){border-left:0;padding-left:2px}
+  .kpi:nth-child(n+3){border-top:1px solid var(--hair)}
+  .charts{grid-template-columns:1fr}
+  .pulse{grid-template-columns:1fr}
+  .controls{flex-direction:column;align-items:stretch}
+  .tabs{justify-content:space-between}
+  .tab{flex:1;justify-content:center;padding:10px 8px;letter-spacing:.08em}
+  .range{justify-content:center}
+  .status{text-align:left}
+}
+@media (max-width:380px){ .tab .c{display:none} }
+@media (prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="top">
+      <div class="mark">
+        <div class="lamps" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div>
+          <h1><b>Taycan</b> Radar</h1>
+          <div class="eyebrow">Markt · Approved Edition</div>
+        </div>
+      </div>
+      <div class="status" id="status"><span class="led"></span><span id="statusText">Lade Daten …</span></div>
+    </div>
+    <div class="lightbar" aria-hidden="true"></div>
+  </header>
+
+  <div class="banner" id="sampleBanner" hidden>
+    <span class="tag">Beispiel</span>
+    <span><b>Das sind Beispieldaten.</b> So sieht dein Dashboard aus, sobald der Bot läuft. Deine echten Autos erscheinen in der Version auf deiner GitHub-Seite. Die Links führen hier zur jeweiligen Suche, nicht zu echten Inseraten.</span>
+  </div>
+
+  <div class="controls">
+    <div class="tabs" role="tablist" aria-label="Ansicht">
+      <button class="tab" role="tab" id="tab-uebersicht" data-view="uebersicht" aria-selected="true">Übersicht</button>
+      <button class="tab" role="tab" id="tab-neu" data-view="neu" aria-selected="false">Neu <span class="c" id="cNew">0</span></button>
+      <button class="tab" role="tab" id="tab-verkauft" data-view="verkauft" aria-selected="false">Verkauft <span class="c" id="cSold">0</span></button>
+    </div>
+    <div class="range" role="group" aria-label="Zeitraum">
+      <button class="rbtn" type="button" data-range="today" aria-pressed="true">Heute</button>
+      <button class="rbtn" type="button" data-range="7" aria-pressed="false">7 Tage</button>
+      <button class="rbtn" type="button" data-range="30" aria-pressed="false">30 Tage</button>
+    </div>
+  </div>
+
+  <!-- ÜBERSICHT -->
+  <section class="view" id="view-uebersicht" role="tabpanel" aria-labelledby="tab-uebersicht">
+    <div class="kpis" id="kpis"></div>
+
+    <div>
+      <p class="sec-title">Plattformen</p>
+      <div class="ledger-wrap"><table class="ledger" id="ledger"></table></div>
+    </div>
+
+    <div>
+      <p class="sec-title">Verlauf · 14 Tage</p>
+      <div class="charts">
+        <div class="chart" id="chartStock">
+          <h3>Inserate im Markt</h3>
+          <div class="sub">Alle Plattformen zusammen, Stand je Tag</div>
+          <div class="plot"></div>
+        </div>
+        <div class="chart" id="chartFlow">
+          <h3>Zugänge und Abgänge</h3>
+          <div class="sub"><span class="key"><i style="background:var(--up)"></i>Neu</span><span class="key"><i style="background:var(--down)"></i>Verkauft / offline</span></div>
+          <div class="plot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="sec-title">Marktpuls</p>
+      <div class="pulse" id="pulse"></div>
+    </div>
+  </section>
+
+  <!-- NEU -->
+  <section class="view" id="view-neu" role="tabpanel" aria-labelledby="tab-neu" hidden>
+    <div class="filterbar" id="fNew"></div>
+    <div class="cards" id="listNew"></div>
+  </section>
+
+  <!-- VERKAUFT -->
+  <section class="view" id="view-verkauft" role="tabpanel" aria-labelledby="tab-verkauft" hidden>
+    <p class="explain">Ein Auto landet hier, wenn sein Inserat bei drei Prüfungen in Folge nicht mehr auftaucht. Meist heißt das verkauft oder reserviert. Manchmal hat der Verkäufer es nur gelöscht oder neu eingestellt.</p>
+    <div class="filterbar" id="fSold"></div>
+    <div class="cards" id="listSold"></div>
+  </section>
+
+  <footer id="foot">Taycan Radar</footer>
+</div>
+
+<script>
+(function(){
+  const NAMES = {mobile:"mobile.de", autoscout:"AutoScout24", kleinanzeigen:"Kleinanzeigen", ebay:"eBay"};
+  const SEARCH = {
+    mobile:"https://suchen.mobile.de/fahrzeuge/search.html?isSearchRequest=true&s=Car&vc=Car&sb=doc&od=down&ms=20100%3B%3B%3BTaycan",
+    autoscout:"https://www.autoscout24.de/lst/porsche/taycan?sort=age&desc=1",
+    kleinanzeigen:"https://www.kleinanzeigen.de/s-autos/porsche-taycan/k0c216",
+    ebay:"https://www.ebay.de/sch/9801/i.html?_nkw=porsche+taycan&_sop=10"
+  };
+  const CAR_SVG = '<svg viewBox="0 0 200 64" fill="none" stroke="#f5f5f3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 44c0-6 4-9 12-10l30-4c10-8 26-16 52-16 22 0 38 6 54 15 14 1 30 4 34 9 3 3 3 8 1 10l-4 1"/><path d="M8 44c-1 3 1 5 6 5h14M62 49h78M172 49h10"/><circle cx="45" cy="48" r="10"/><circle cx="157" cy="48" r="10"/><path d="M62 30c14-9 28-12 44-12l2 12zM114 18c14 0 26 4 38 11l-36 1z" stroke-width="1"/><path d="M178 34h12" stroke-width="2.2"/></svg>';
+
+  const store = {
+    get(k,d){ try{ const v = localStorage.getItem("trm_"+k); return v===null? d : JSON.parse(v); }catch(e){ return d; } },
+    set(k,v){ try{ localStorage.setItem("trm_"+k, JSON.stringify(v)); }catch(e){} }
+  };
+  const S = {
+    view: "uebersicht", range: store.get("range","today"),
+    fNew: "all", fSold: "all", data: null, status: null, sample: false
+  };
+  const h = location.hash.replace("#","");
+  if(["uebersicht","neu","verkauft"].includes(h)) S.view = h;
+
+  // ---------- helpers
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const eur = v => v ? v.toLocaleString("de-DE") + " €" : "Preis k. A.";
+  const kmf = v => v ? v.toLocaleString("de-DE") + " km" : "–";
+  const t = s => new Date(s).getTime();
+  const DAY = 864e5;
+  function dayKey(ms){ const d = new Date(ms); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+  function rangeStart(){
+    const now = new Date();
+    if(S.range==="today") return new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    return Date.now() - parseInt(S.range,10)*DAY;
+  }
+  const rangeLabel = () => S.range==="today" ? "heute" : `in ${S.range} Tagen`;
+  function ago(ms){
+    const m = Math.round((Date.now()-ms)/6e4);
+    if(m < 1) return "gerade eben";
+    if(m < 60) return `vor ${m} Min`;
+    const hh = Math.round(m/60);
+    if(hh < 24) return `vor ${hh} Std`;
+    const d = Math.round(hh/24);
+    return d === 1 ? "gestern" : `vor ${d} Tagen`;
+  }
+  const dt = ms => new Date(ms).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) + " Uhr";
+  const median = a => { if(!a.length) return null; const s=[...a].sort((x,y)=>x-y); const m=s.length>>1; return s.length%2? s[m] : Math.round((s[m-1]+s[m])/2); };
+  function priceDrop(r){
+    const p = (r.prices||[]).map(x=>x[1]).filter(Boolean);
+    if(p.length < 2) return 0;
+    return p[0] - p[p.length-1];   // positiv = günstiger geworden
+  }
+  const daysOnline = r => Math.max(0, Math.round((t(r.removed) - t(r.first_seen))/DAY));
+
+  // ---------- data
+  async function load(){
+    try{
+      const [d, s] = await Promise.all([
+        fetch("data.json",{cache:"no-store"}).then(r=>{ if(!r.ok) throw 0; return r.json(); }),
+        fetch("status.json",{cache:"no-store"}).then(r=> r.ok ? r.json() : null).catch(()=>null)
+      ]);
+      S.data = d; S.status = s; S.sample = false;
+    }catch(e){
+      S.data = sampleData(); S.status = sampleStatus(); S.sample = true;
+    }
+    $("sampleBanner").hidden = !S.sample;
+    render();
+  }
+
+  // ---------- render
+  function render(){
+    const d = S.data; if(!d) return;
+    const from = rangeStart();
+    const plats = (d.platforms||[]).map(p=>p.id);
+    const all = d.active.concat(d.removed);
+    const news = all.filter(r => !r.baseline && t(r.first_seen) >= from).sort((a,b)=>t(b.first_seen)-t(a.first_seen));
+    const sold = d.removed.filter(r => t(r.removed) >= from).sort((a,b)=>t(b.removed)-t(a.removed));
+
+    // status
+    const st = S.status;
+    const okN = st ? Object.values(st.platforms||{}).filter(p=>p.ok).length : 0;
+    const totN = st ? Object.keys(st.platforms||{}).length : 0;
+    $("statusText").textContent = S.sample ? "Beispieldaten" :
+      (st ? `Aktualisiert ${ago(t(st.updated))} · ${okN}/${totN} Quellen live` : "Status unbekannt");
+    $("status").classList.toggle("live", !S.sample && okN>0);
+
+    $("cNew").textContent = news.length;
+    $("cSold").textContent = sold.length;
+    document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.view===S.view)));
+    document.querySelectorAll(".rbtn").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.range===S.range)));
+    ["uebersicht","neu","verkauft"].forEach(v=> $("view-"+v).hidden = v!==S.view);
+
+    if(S.view==="uebersicht") renderOverview(d, plats, news, sold);
+    if(S.view==="neu") renderCards("listNew","fNew", news, false, plats);
+    if(S.view==="verkauft") renderCards("listSold","fSold", sold, true, plats);
+  }
+
+  function renderOverview(d, plats, news, sold){
+    const active = d.active;
+    // unique vehicles: same car on several platforms counts once
+    const seen = new Set(); let unique = 0;
+    active.forEach(r=>{
+      if(r.also && r.also.length){
+        const fp = [r.year, r.price, Math.round((r.km||0)/1000)].join("|");
+        if(seen.has(fp)) return; seen.add(fp);
+      }
+      unique++;
+    });
+    const soldDays = sold.map(daysOnline);
+    const avgDays = soldDays.length ? Math.round(soldDays.reduce((a,b)=>a+b,0)/soldDays.length) : null;
+    const medPrice = median(active.map(r=>r.price).filter(Boolean));
+
+    $("kpis").innerHTML = `
+      <div class="kpi"><div class="l">Im Markt</div><div class="v num">${active.length}</div><div class="s">${unique} verschiedene Autos</div></div>
+      <div class="kpi up"><div class="l">Neu ${rangeLabel()}</div><div class="v num"><span class="sign">+</span>${news.length}</div><div class="s">${news.filter(r=>r.removed).length} davon schon wieder weg</div></div>
+      <div class="kpi"><div class="l">Verkauft ${rangeLabel()}</div><div class="v num"><span class="sign">−</span>${sold.length}</div><div class="s">Inserat offline</div></div>
+      <div class="kpi"><div class="l">Ø Standzeit</div><div class="v num">${avgDays ?? "–"}<small>${avgDays!==null?"Tage":""}</small></div><div class="s">${medPrice ? "Median-Preis " + eur(medPrice) : "der verkauften Autos"}</div></div>`;
+
+    // ledger
+    const st = (S.status && S.status.platforms) || {};
+    let rows = "", tA=0,tN=0,tS=0;
+    plats.forEach(pid=>{
+      const a = active.filter(r=>r.platform===pid);
+      const n = news.filter(r=>r.platform===pid).length;
+      const s = sold.filter(r=>r.platform===pid).length;
+      const mp = median(a.map(r=>r.price).filter(Boolean));
+      tA+=a.length; tN+=n; tS+=s;
+      const ps = st[pid];
+      const chip = !ps ? `<span class="chip">–</span>` : ps.ok
+        ? `<span class="chip"><i></i>Live</span>`
+        : `<span class="chip off" title="${esc(ps.error||"")}"><i></i>Blockiert</span>`;
+      rows += `<tr><td class="p">${esc(NAMES[pid]||pid)}</td><td>${chip}</td><td class="big">${a.length}</td>
+        <td class="plus">${n?"+"+n:"0"}</td><td class="minus">${s?"−"+s:"0"}</td><td>${mp?eur(mp):"–"}</td></tr>`;
+    });
+    $("ledger").innerHTML = `<thead><tr><th>Plattform</th><th>Status</th><th>Im Markt</th><th>Neu</th><th>Verkauft</th><th>Median-Preis</th></tr></thead>
+      <tbody>${rows}<tr class="total"><td>Gesamt</td><td></td><td class="big">${tA}</td><td class="plus">+${tN}</td><td class="minus">−${tS}</td><td>${medPrice?eur(medPrice):"–"}</td></tr></tbody>`;
+
+    // charts
+    const days = [];
+    const today0 = new Date(); today0.setHours(0,0,0,0);
+    for(let i=13;i>=0;i--) days.push(dayKey(today0.getTime() - i*DAY));
+    const hist = d.history || {};
+    const stock = days.map(k => { const v = hist[k]; return v ? Object.values(v).reduce((a,b)=>a+b,0) : null; });
+    const all = d.active.concat(d.removed);
+    const inn = days.map(k => all.filter(r=>!r.baseline && dayKey(t(r.first_seen))===k).length);
+    const out = days.map(k => d.removed.filter(r=>dayKey(t(r.removed))===k).length);
+    drawStock($("chartStock"), days, stock);
+    drawFlow($("chartFlow"), days, inn, out);
+
+    // pulse
+    const cheapest = active.filter(r=>r.price).sort((a,b)=>a.price-b.price)[0];
+    const fastest = d.removed.filter(r=>!r.baseline).sort((a,b)=>daysOnline(a)-daysOnline(b))[0];
+    const dropped = active.filter(r=>priceDrop(r)>0).sort((a,b)=>priceDrop(b)-priceDrop(a))[0];
+    const pc = (label, val, r, link) => r
+      ? `<a class="pcard" href="${esc(link||r.url)}" target="_blank" rel="noopener"><span class="l">${label}</span><span class="v num">${val}</span><span class="t">${esc(r.title)} · ${esc(NAMES[r.platform]||r.platform)}</span></a>`
+      : `<div class="pcard"><span class="l">${label}</span><span class="v">–</span><span class="t">Noch keine Daten</span></div>`;
+    $("pulse").innerHTML =
+      pc("Günstigster im Markt", cheapest?eur(cheapest.price):"", cheapest) +
+      pc("Schnellster Verkauf", fastest? daysOnline(fastest)+" Tage" : "", fastest) +
+      pc("Größte Preissenkung", dropped? "−"+eur(priceDrop(dropped)) : "", dropped);
+  }
+
+  // ---------- charts (SVG, one axis each)
+  function axisMax(v){ const m = Math.max(1,...v); const step = Math.pow(10, Math.floor(Math.log10(m))); return Math.ceil(m/step)*step; }
+  const W = 480, H = 200, PL = 34, PR = 40, PT = 16, PB = 26;
+  const short = k => { const [y,m,d]=k.split("-"); return `${d}.${m}.`; };
+
+  function drawStock(box, days, vals){
+    const plot = box.querySelector(".plot");
+    const real = vals.filter(v=>v!==null);
+    if(!real.length){ plot.innerHTML = `<div class="empty"><b>Noch kein Verlauf</b>Erscheint nach dem ersten Tag.</div>`; return; }
+    const lo = Math.max(0, Math.floor(Math.min(...real)*0.9/10)*10), hi = Math.ceil(Math.max(...real)*1.05/10)*10 || 10;
+    const x = i => PL + i*(W-PL-PR)/(days.length-1);
+    const y = v => PT + (H-PT-PB) * (1 - (v-lo)/((hi-lo)||1));
+    let grid = "", ticks = 4;
+    for(let i=0;i<=ticks;i++){ const v = lo + (hi-lo)*i/ticks; grid += `<line x1="${PL}" x2="${W-PR}" y1="${y(v)}" y2="${y(v)}" stroke="var(--hair)" stroke-width="1"/><text x="${PL-8}" y="${y(v)+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${Math.round(v)}</text>`; }
+    const pts = vals.map((v,i)=> v===null? null : [x(i), y(v)]);
+    const segs = []; let cur = [];
+    pts.forEach(p=>{ if(p) cur.push(p); else if(cur.length){ segs.push(cur); cur=[]; } }); if(cur.length) segs.push(cur);
+    const line = segs.map(s=>"M"+s.map(p=>p.join(",")).join("L")).join("");
+    const area = segs.map(s=>`M${s[0][0]},${H-PB}L`+s.map(p=>p.join(",")).join("L")+`L${s[s.length-1][0]},${H-PB}Z`).join("");
+    const lastI = vals.map((v,i)=>v!==null?i:-1).filter(i=>i>=0).pop();
+    const labels = days.map((k,i)=> (i%3===0 || i===days.length-1) ? `<text x="${x(i)}" y="${H-8}" text-anchor="middle" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${i===days.length-1?"Heute":short(k)}</text>` : "").join("");
+    plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Inserate im Markt, letzte 14 Tage">
+      <defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5f5f3" stop-opacity=".22"/><stop offset="1" stop-color="#f5f5f3" stop-opacity="0"/></linearGradient></defs>
+      ${grid}<path d="${area}" fill="url(#gs)"/><path d="${line}" fill="none" stroke="var(--white)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="${x(lastI)}" cy="${y(vals[lastI])}" r="4.5" fill="var(--white)" stroke="var(--black)" stroke-width="2"/>
+      <text x="${x(lastI)+9}" y="${y(vals[lastI])+4}" text-anchor="start" fill="var(--white)" font-size="12" font-weight="600" font-family="var(--f-display)">${vals[lastI]}</text>
+      ${labels}${hitLayer(days.length, x, i=>`<b>${i===days.length-1?"Heute":short(days[i])}</b><br>${vals[i]===null?"keine Messung":vals[i]+" Inserate"}`)}
+    </svg>`;
+    bindTips(plot);
+  }
+
+  function drawFlow(box, days, inn, out){
+    const plot = box.querySelector(".plot");
+    const m = axisMax(inn.concat(out));
+    const mid = PT + (H-PT-PB)/2;
+    const half = (H-PT-PB)/2;
+    const bw = (W-PL-PR)/days.length;
+    const x = i => PL + i*bw;
+    const yUp = v => mid - half*v/m, yDn = v => mid + half*v/m;
+    let g = `<line x1="${PL}" x2="${W-PR}" y1="${mid}" y2="${mid}" stroke="var(--hair-strong)" stroke-width="1"/>`;
+    g += `<line x1="${PL}" x2="${W-PR}" y1="${PT}" y2="${PT}" stroke="var(--hair)"/><line x1="${PL}" x2="${W-PR}" y1="${H-PB}" y2="${H-PB}" stroke="var(--hair)"/>`;
+    g += `<text x="${PL-8}" y="${PT+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">+${m}</text><text x="${PL-8}" y="${mid+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">0</text><text x="${PL-8}" y="${H-PB+3.5}" text-anchor="end" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">−${m}</text>`;
+    const w = Math.max(4, bw*0.56), r = Math.min(3, w/2);
+    days.forEach((k,i)=>{
+      const cx = x(i) + (bw-w)/2;
+      if(inn[i]){ const top = yUp(inn[i]); g += `<path d="${roundBar(cx, top, w, mid-top-1, r, true)}" fill="var(--up)"/>`; }
+      if(out[i]){ const bot = yDn(out[i]); g += `<path d="${roundBar(cx, mid+1, w, bot-mid-1, r, false)}" fill="var(--down)"/>`; }
+      if(i%3===0 || i===days.length-1) g += `<text x="${x(i)+bw/2}" y="${H-8}" text-anchor="middle" fill="var(--grey)" font-size="10" font-family="var(--f-mono)">${i===days.length-1?"Heute":short(k)}</text>`;
+    });
+    plot.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Neue und verkaufte Inserate je Tag">${g}
+      ${hitLayer(days.length, i=>x(i)+bw/2, i=>`<b>${i===days.length-1?"Heute":short(days[i])}</b><br>+${inn[i]} neu · −${out[i]} verkauft`)}</svg>`;
+    bindTips(plot);
+  }
+  function roundBar(x, y, w, hgt, r, up){
+    if(hgt <= 0) return "";
+    r = Math.min(r, hgt);
+    return up
+      ? `M${x},${y+hgt}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+hgt}Z`
+      : `M${x},${y}V${y+hgt-r}Q${x},${y+hgt} ${x+r},${y+hgt}H${x+w-r}Q${x+w},${y+hgt} ${x+w},${y+hgt-r}V${y}Z`;
+  }
+  function hitLayer(n, xf, tip){
+    const w = (W-PL-PR)/n;
+    let s = "";
+    for(let i=0;i<n;i++){ s += `<rect x="${xf(i)-w/2}" y="${PT}" width="${w}" height="${H-PT-PB}" fill="#000" fill-opacity="0" data-tip="${esc(tip(i))}" data-x="${xf(i)}"/>`; }
+    return s;
+  }
+  function bindTips(plot){
+    const box = plot.parentElement;
+    let tipEl = box.querySelector(".tip");
+    if(!tipEl){ tipEl = document.createElement("div"); tipEl.className="tip"; tipEl.hidden = true; box.appendChild(tipEl); }
+    const svg = plot.querySelector("svg");
+    svg.querySelectorAll("rect[data-tip]").forEach(r=>{
+      const show = ()=>{
+        const bb = svg.getBoundingClientRect(), bx = box.getBoundingClientRect();
+        const scale = bb.width / W;
+        tipEl.innerHTML = r.dataset.tip;
+        tipEl.hidden = false;
+        const left = bb.left - bx.left + parseFloat(r.dataset.x)*scale;
+        tipEl.style.left = Math.min(Math.max(left, 60), bx.width-60) + "px";
+        tipEl.style.top = (bb.top - bx.top + PT*scale - 4) + "px";
+      };
+      r.addEventListener("pointerenter", show);
+      r.addEventListener("pointerdown", show);
+      r.addEventListener("pointerleave", ()=> tipEl.hidden = true);
+    });
+  }
+
+  // ---------- cards
+  function renderCards(listId, filterKey, items, sold, plats){
+    const counts = {all: items.length}; plats.forEach(p=>counts[p] = items.filter(r=>r.platform===p).length);
+    const fsel = S[filterKey];
+    $(filterKey).innerHTML = ["all"].concat(plats).map(p=>
+      `<button class="fchip" type="button" data-f="${p}" aria-pressed="${p===fsel}">${p==="all"?"Alle":esc(NAMES[p]||p)}<span class="c">${counts[p]||0}</span></button>`).join("");
+    const list = items.filter(r=> fsel==="all" || r.platform===fsel);
+    const el = $(listId);
+    if(!list.length){
+      el.innerHTML = `<div class="empty" style="grid-column:1/-1"><b>${sold?"Keine Verkäufe":"Keine neuen Autos"} ${rangeLabel()}</b>${S.range==="30"?"Der Bot meldet sich, sobald sich etwas tut.":"Stell oben einen längeren Zeitraum ein."}</div>`;
+      return;
+    }
+    el.innerHTML = list.map(r => card(r, sold)).join("");
+    el.querySelectorAll("img[data-fallback]").forEach(img=>{
+      img.addEventListener("error", ()=>{ img.remove(); }, {once:true});
+    });
+  }
+  function card(r, sold){
+    const name = NAMES[r.platform] || r.platform;
+    const drop = priceDrop(r);
+    const firstPrice = (r.prices && r.prices[0] && r.prices[0][1]) || r.price;
+    const badges = [];
+    if(drop > 0) badges.push(`<span class="badge drop">Preis −${eur(drop)}</span>`);
+    if(drop < 0) badges.push(`<span class="badge soft">Preis +${eur(-drop)}</span>`);
+    (r.also||[]).forEach(p=> badges.push(`<span class="badge soft">auch auf ${esc(NAMES[p]||p)}</span>`));
+    if(!sold && r.removed) badges.push(`<span class="badge soft">schon wieder offline</span>`);
+    const img = r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fallback>` : "";
+    const when = sold ? `offline ${ago(t(r.removed))}` : ago(t(r.first_seen));
+    const facts = sold
+      ? `<div><div class="l">Standzeit</div><div class="v">${r.baseline?"≥ ":""}${daysOnline(r)} Tage</div></div>
+         <div><div class="l">Offline seit</div><div class="v">${dt(t(r.removed)).replace(" Uhr","")}</div></div>
+         <div><div class="l">Startpreis</div><div class="v">${firstPrice?eur(firstPrice):"–"}</div></div>`
+      : `<div><div class="l">EZ</div><div class="v">${r.year||"–"}</div></div>
+         <div><div class="l">Laufleistung</div><div class="v">${kmf(r.km)}</div></div>
+         <div><div class="l">Entdeckt</div><div class="v">${dt(t(r.first_seen)).replace(" Uhr","")}</div></div>`;
+    return `<article class="car${sold?" sold":""}">
+      <div class="shot"><div class="ph">${CAR_SVG}</div>${img}<span class="ptag">${esc(name)}</span><span class="when">${when}</span></div>
+      <div class="cbody">
+        <h3 class="ctitle">${esc(r.title||"Porsche Taycan")}</h3>
+        <div class="cprice"><span class="pr num">${eur(r.price)}</span><span class="meta">${sold ? "letzter Preis" : (r.year?"EZ "+r.year+" · ":"")+kmf(r.km)}</span></div>
+        ${r.snippet ? `<p class="snip">${esc(r.snippet)}</p>` : ""}
+        ${badges.length ? `<div class="badges">${badges.join("")}</div>` : ""}
+        <div class="facts">${facts}</div>
+        <a class="go${sold?" ghost":""}" href="${esc(r.url)}" target="_blank" rel="noopener">${sold?"Letztes Inserat ansehen":"Inserat öffnen"}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        ${sold ? `<p class="note">Die Seite ist evtl. schon gelöscht</p>` : ""}
+      </div></article>`;
+  }
+
+  // ---------- events
+  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>{
+    S.view = b.dataset.view;
+    try{ history.replaceState(null,"","#"+S.view); }catch(e){}
+    render();
+  }));
+  document.querySelectorAll(".rbtn").forEach(b=>b.addEventListener("click", ()=>{ S.range = b.dataset.range; store.set("range",S.range); render(); }));
+  ["fNew","fSold"].forEach(k=> $(k).addEventListener("click", e=>{
+    const b = e.target.closest("[data-f]"); if(!b) return; S[k] = b.dataset.f; render();
+  }));
+
+  // ---------- Beispieldaten (nur wenn keine echte data.json erreichbar ist)
+  function rng(seed){ return function(){ seed |= 0; seed = seed + 0x6D2B79F5 | 0; let x = Math.imul(seed ^ seed >>> 15, 1 | seed); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
+  function sampleData(){
+    const R = rng(911);
+    const pick = a => a[Math.floor(R()*a.length)];
+    const MODELS = [
+      ["Taycan 4S", 2020, 56000], ["Taycan 4S", 2021, 63000], ["Taycan 4S", 2022, 72000], ["Taycan 4S", 2023, 79000],
+      ["Taycan GTS", 2022, 84000], ["Taycan GTS Sport Turismo", 2023, 92000], ["Taycan Turbo", 2021, 78000],
+      ["Taycan Turbo S", 2022, 99000], ["Taycan", 2021, 55000], ["Taycan", 2024, 84000], ["Taycan 4S", 2024, 99000],
+      ["Taycan 4 Cross Turismo", 2022, 71000], ["Taycan 4S Cross Turismo", 2022, 79000], ["Taycan Sport Turismo", 2023, 74000]
+    ];
+    const EXTRAS = ["Performancebatterie Plus","Panorama","Bose","Burmester","Matrix-LED","Hinterachslenkung","Sport Chrono","InnoDrive","Beifahrerdisplay","Luftfederung","22-kW-Lader","Head-up","Sitzbelüftung","Wärmepumpe"];
+    const SNIP = [
+      "Porsche Approved Garantie bis {m}/{y} · MwSt. ausweisbar · Scheckheft Porsche Zentrum",
+      "Porsche Approved · 1. Hand · unfallfrei · MwSt. ausweisbar · Batterie-SoH 94 %",
+      "Approved Garantie 24 Monate · Leasingrückläufer · MwSt. ausweisbar · Wartung neu",
+      "Porsche Approved · Nichtraucher · Winterräder auf Felge · MwSt. ausweisbar"
+    ];
+    const PL = [["mobile",.42],["autoscout",.33],["kleinanzeigen",.15],["ebay",.10]];
+    const plat = () => { let x = R(), acc = 0; for(const [p,w] of PL){ acc += w; if(x < acc) return p; } return "mobile"; };
+    const now = Date.now();
+    const mk = (firstAgoH, removedAgoH, baseline) => {
+      const [model, year, base] = pick(MODELS);
+      const p = plat();
+      const price = Math.round((base * (0.92 + R()*0.18))/100)*100;
+      const km = Math.round(((2026-year)*13500 + (R()-.5)*12000) / 500)*500 + 3000;
+      const ex = [...EXTRAS].sort(()=>R()-.5).slice(0,3);
+      const title = `Porsche ${model} ${ex.join(" | ")}`;
+      const r = {key:p+":s"+Math.floor(R()*1e9), platform:p, title, url:SEARCH[p], price, year, km,
+        snippet: pick(SNIP).replace("{m}", String(1+Math.floor(R()*12)).padStart(2,"0")).replace("{y}", 2027+Math.floor(R()*2)),
+        first_seen: new Date(now - firstAgoH*36e5).toISOString(), baseline: !!baseline, prices: [[new Date(now-firstAgoH*36e5).toISOString(), price]]};
+      if(R() < .14){ const np = price - Math.round((1000+R()*4000)/500)*500; r.prices.push([new Date(now-firstAgoH*18e5).toISOString(), np]); r.price = np; }
+      if(removedAgoH !== null) r.removed = new Date(now - removedAgoH*36e5).toISOString();
+      return r;
+    };
+    const hoursToday = new Date().getHours() + new Date().getMinutes()/60;
+    const active = [], removed = [];
+    for(let i=0;i<88;i++) active.push(mk(24*(31+R()*40), null, true));
+    for(let i=0;i<4;i++) active.push(mk(Math.max(.2, R()*Math.max(hoursToday-.2,.5)), null, false));
+    for(let i=0;i<9;i++) active.push(mk(24*(1+R()*6), null, false));
+    for(let i=0;i<14;i++) active.push(mk(24*(7+R()*23), null, false));
+    for(let i=0;i<2;i++) removed.push(mk(24*(4+R()*20), Math.max(.1, R()*Math.max(hoursToday-.2,.4)), false));
+    for(let i=0;i<7;i++){ const rem = 24*(1+R()*6); removed.push(mk(rem + 24*(2+R()*25), rem, R()<.5)); }
+    for(let i=0;i<13;i++){ const rem = 24*(7+R()*22); removed.push(mk(rem + 24*(3+R()*30), rem, R()<.5)); }
+    // gleiches Auto auf zwei Plattformen
+    const twin = Object.assign({}, active[90], {key:"autoscout:twin", platform:"autoscout", url:SEARCH.autoscout});
+    if(active[90].platform === "autoscout"){ twin.platform="mobile"; twin.key="mobile:twin"; twin.url=SEARCH.mobile; }
+    active[90].also = [twin.platform]; twin.also = [active[90].platform]; active.push(twin);
+    // Verlauf
+    const history = {}; const levels = []; let level = active.length;
+    for(let i=0;i<30;i++){ levels[i] = level; level = Math.round(level - (R()-.45)*4); }
+    for(let i=29;i>=0;i--){
+      const k = dayKey(now - i*DAY);
+      const tot = levels[i];
+      history[k] = {mobile: Math.round(tot*.42), autoscout: Math.round(tot*.33), kleinanzeigen: Math.round(tot*.15)};
+      history[k].ebay = tot - history[k].mobile - history[k].autoscout - history[k].kleinanzeigen;
+    }
+    return {version:2, platforms:Object.keys(NAMES).map(id=>({id, name:NAMES[id]})), active, removed, history};
+  }
+  function sampleStatus(){
+    const now = new Date(Date.now()-4*6e4).toISOString();
+    return {updated: now, platforms:{
+      mobile:{ok:false, error:"HTTP 403 – Plattform blockt automatische Abrufe"},
+      autoscout:{ok:true}, kleinanzeigen:{ok:true}, ebay:{ok:true}}};
+  }
+
+  load();
+  // Live-Version: alle 5 Minuten neue Daten holen
+  setInterval(()=>{ if(!S.sample) load(); else render(); }, 5*6e4);
+})();
+</script>
+
+</body></html>
