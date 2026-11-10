@@ -1,0 +1,306 @@
+{
+ "history": {
+  "2026-11-10": {
+   "autoscout": 0,
+   "kleinanzeigen": 13
+  }
+ },
+ "listings": {
+  "kleinanzeigen:3456141974": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/c4/c48f9805-951f-4279-b15e-e66f023a53ea?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3456141974",
+   "km": 49999,
+   "platform": "kleinanzeigen",
+   "price": 63999,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     63999
+    ]
+   ],
+   "snippet": "25 82266 Inning am Ammersee 11.07.2026 Porsche TAYCAN 4S CROSS TURISMO *APPROVED 11/27* Sehr schöner Porsche Taycan 4S Cross Turismo direkt vom Porsche Zentrum: - Deutsches Fahrzeug -... 63.999 € 49.999 km EZ 01/2023",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-4s-cross-turismo-approved-11-27-/3456141974-216-6358",
+   "year": 2026
+  },
+  "kleinanzeigen:3475633708": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/00/005fd2dd-8bd2-464b-ac7c-58d763b6b924?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3475633708",
+   "km": 37528,
+   "platform": "kleinanzeigen",
+   "price": 62790,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     62790
+    ]
+   ],
+   "snippet": "33 34123 Kassel 04.10.2026 Porsche Approved 07/27 | MwSt. | Pano | Luftfw. | Wärmep Porsche Taycan in Tiefschwarz, Erstzulassung 06/2023, nur 37.528 km und aus dritter Hand.... 62.790 € 37.528 km EZ 06/2023",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-approved-07-27-mwst-pano-luftfw-waermep/3475633708-216-4926",
+   "year": 2026
+  },
+  "kleinanzeigen:3490213022": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/cb/cbb9ab85-9204-4a61-b1b5-be69477287e9?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3490213022",
+   "km": 84436,
+   "platform": "kleinanzeigen",
+   "price": 57999,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     57999
+    ]
+   ],
+   "snippet": "39 53783 Eitorf Gestern, 02:02 Porsche Taycan Cross 4 S APPROVED|Pano|PDLS+|Bose|360°| ⭐ Porsche Taycan Cross Turismo 1. Hand MwSt. ausweisbar Matrix-LED Panorama InnoDrive 18-Wege... 57.999 € 84.436 km EZ 12/2021",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-cross-4-s-approved-pano-pdls-bose-360-/3490213022-216-1694",
+   "year": 2021
+  },
+  "kleinanzeigen:3498941015": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/02/02deb4a1-a305-45d8-93a4-4d6f1051853d?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3498941015",
+   "km": 51500,
+   "platform": "kleinanzeigen",
+   "price": 62500,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     62500
+    ]
+   ],
+   "snippet": "17 24103 Kiel - Vorstadt 30.08.2026 Porsche Taycan 4 Cross Turismo - Schwarz - Approved Porsche Taycan 4 Cross Turismo – Tiefschwarz Metallic – Porsche Approved - Top Gepflegt Zum... 62.500 € VB 51.500 km EZ 12/2022",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-4-cross-turismo-schwarz-approved/3498941015-216-26995",
+   "year": 2026
+  },
+  "kleinanzeigen:3512810414": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/8b/8b0d51de-66f3-4a10-9b05-246292cfb7cd?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3512810414",
+   "km": 58500,
+   "platform": "kleinanzeigen",
+   "price": 75900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     75900
+    ]
+   ],
+   "snippet": "14 50858 Junkersdorf 14.09.2026 Porsche Taycan GTS Kreide, Massage, Bose, HA-Lenkung, Approved Hallo, ich möchte jetzt schon mal meinen wunderschönen Porsche Taycan GTS in der tollen Farbe... 75.900 € VB 77.900 € 58.500…",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-gts-kreide-massage-bose-ha-lenkung-approved/3512810414-216-17139",
+   "year": 2026
+  },
+  "kleinanzeigen:3533598415": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/8c/8cba3ba7-1e62-4c28-b109-fc540e70c48b?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3533598415",
+   "km": 63500,
+   "platform": "kleinanzeigen",
+   "price": 75900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     75900
+    ]
+   ],
+   "snippet": "19 61389 Schmitten 07.10.2026 Porsche Taycan Turbo Cross Turismo Approved 89 % Battery HUD HAL Porsche Taycan Turbo Cross Turismo | Approved | 89 % Battery Health | InnoDrive | PDCC Sport |... 75.900 € 79.900 € 63.500 k…",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-turbo-cross-turismo-approved-89-battery-hud-hal/3533598415-216-4535",
+   "year": 2026
+  },
+  "kleinanzeigen:3536851763": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/00/004c626d-95fb-4dad-af36-f3f56e42b56c?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3536851763",
+   "km": 68490,
+   "platform": "kleinanzeigen",
+   "price": 77900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     77900
+    ]
+   ],
+   "snippet": "20 30855 Langenhagen Heute, 17:44 Porsche Taycan Turbo, 24 Mon. Porsche Approved, Vollausstattung Porsche Approved bis 09/2028! SoH Wert 91%. Zum Verkauf steht ein außergewöhnlich hochwertig... 77.900 € VB 68.490 km EZ …",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-turbo-24-mon-porsche-approved-vollausstattung/3536851763-216-3043",
+   "year": 2028
+  },
+  "kleinanzeigen:3540476523": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/fc/fc5a3207-15fc-43dc-9596-c83218cf1699?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3540476523",
+   "km": 123687,
+   "platform": "kleinanzeigen",
+   "price": 54999,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     54999
+    ]
+   ],
+   "snippet": "25 82266 Inning am Ammersee 14.10.2026 Porsche TAYCAN 4S CROSS TURISMO *APPROVED*EXKLUSIV*MWST* Sehr schöner Porsche Taycan Cross Turismo 4S: - 1.Hand - Deutsches Fahrzeug - Unfallfrei -... 54.999 € 123.687 km EZ 10/2022",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-4s-cross-turismo-approved-exklusiv-mwst-/3540476523-216-6358",
+   "year": 2026
+  },
+  "kleinanzeigen:3545690149": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/83/8320e482-2c7c-40f0-95fe-d29133e23e6a?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3545690149",
+   "km": 159000,
+   "platform": "kleinanzeigen",
+   "price": 48999,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     48999
+    ]
+   ],
+   "snippet": "10 30855 Langenhagen Heute, 13:40 Panamera 971 4S Sport Turismo Approved suche Taycan 997 G500 G63 Top gepflegter Porsche Panamera 971 4S Sport Turismo mit einer Exklusiv-Ausstattung auf... 48.999 € VB 49.499 € 159.000 …",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/panamera-971-4s-sport-turismo-approved-suche-taycan-997-g500-g63/3545690149-216-3043",
+   "year": 2018
+  },
+  "kleinanzeigen:3556695642": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/b8/b8e9d5d6-f656-40e1-8c13-a6286cd47eb3?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3556695642",
+   "km": 17299,
+   "platform": "kleinanzeigen",
+   "price": 76900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     76900
+    ]
+   ],
+   "snippet": "40 97241 Bergtheim (Unterfranken) 30.10.2026 Porsche Taycan GTS/Approved Garantie/Head-Up BOSE/Chrono BITTE BERÜCKSICHTIGEN SIE, DASS EINE FAHRZEUGBESICHTIGUNG NUR NACHTERMINABSPRACHE MÖGLICH IST.... 76.900 € 17.299 km …",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-gts-approved-garantie-head-up-bose-chrono/3556695642-216-26975",
+   "year": 2026
+  },
+  "kleinanzeigen:3558051317": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/bf/bf2fdba6-3539-4ef0-a2d3-8d89c6e82fde?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3558051317",
+   "km": 109237,
+   "platform": "kleinanzeigen",
+   "price": 59999,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     59999
+    ]
+   ],
+   "snippet": "22 82266 Inning am Ammersee 01.11.2026 Porsche TAYCAN 4S CROSS TURISMO*SPORTDESIGN*APPROVED* Sehr schöner Porsche Taycan 4S Cross Turismo direkt vom Porsche Zentrum. - Deutsches Fahrzeug -... 59.999 € 109.237 km EZ 04/2…",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-4s-cross-turismo-sportdesign-approved-/3558051317-216-6358",
+   "year": 2026
+  },
+  "kleinanzeigen:3560983787": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/0e/0e52ba31-0bbb-4a70-8143-7d3569f83236?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3560983787",
+   "km": 52000,
+   "platform": "kleinanzeigen",
+   "price": 76900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     76900
+    ]
+   ],
+   "snippet": "7 21762 Otterndorf 03.11.2026 Porsche Taycan GTS Sport Turismo APPROVED Massage Panorama HUD Der Taycan ist sehr zuverlässig und super ausgestattet. Die Porsche Approved Garantie inkl.... 76.900 € 52.000 km EZ 12/2022",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-gts-sport-turismo-approved-massage-panorama-hud/3560983787-216-3304",
+   "year": 2026
+  },
+  "kleinanzeigen:3564013740": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/d5/d54662e2-dbcb-4ddc-8c9f-8c2c90991bbd?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3564013740",
+   "km": 26938,
+   "platform": "kleinanzeigen",
+   "price": 77900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     77900
+    ]
+   ],
+   "snippet": "34 89231 Neu Ulm 07.11.2026 Porsche Taycan GTS*Approved 11.2027*InnoDrive*Pano*PDLS+ Sonderausstattung: Ambiente-Beleuchtung, Außenspiegel elektr. anklappbar, Beifahrer-Display,... 77.900 € 26.938 km EZ 09/2023",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-gts-approved-11-2027-innodrive-pano-pdls-/3564013740-216-6681",
+   "year": 2026
+  },
+  "kleinanzeigen:3567706284": {
+   "baseline": true,
+   "first_seen": "2026-11-10T20:44:13Z",
+   "image": "https://img.kleinanzeigen.de/api/v1/prod-ads/images/e5/e5d6c55c-2295-4aef-a2a4-a30dbd06b872?rule=$_2.AUTO",
+   "key": "kleinanzeigen:3567706284",
+   "km": 80000,
+   "platform": "kleinanzeigen",
+   "price": 56900,
+   "prices": [
+    [
+     "2026-11-10T20:44:13Z",
+     56900
+    ]
+   ],
+   "snippet": "40 48268 Greven Heute, 17:14 Porsche Taycan Cross Turismo 4S Approved Garantie 93 KWH Porsche Taycan Cross Turismo 4 S Allrad 573 PS Großer Akku 93 KW mit Wärmepumpe Porsche Approved... 56.900 € 80.000 km EZ 01/2022",
+   "title": "Porsche Taycan",
+   "url": "https://www.kleinanzeigen.de/s-anzeige/porsche-taycan-cross-turismo-4s-approved-garantie-93-kwh/3567706284-216-1311",
+   "year": 2022
+  }
+ },
+ "platforms": {
+  "autoscout": {
+   "count": 0,
+   "error": null,
+   "name": "AutoScout24",
+   "ok": true,
+   "since": "2026-11-10T20:44:13Z"
+  },
+  "ebay": {
+   "error": "HTTP 403 – Plattform blockt automatische Abrufe",
+   "name": "eBay",
+   "ok": false,
+   "since": "2026-11-10T20:44:13Z"
+  },
+  "kleinanzeigen": {
+   "count": 14,
+   "error": null,
+   "name": "Kleinanzeigen",
+   "ok": true,
+   "since": "2026-11-10T20:44:13Z"
+  },
+  "mobile": {
+   "error": "HTTP 403 – Plattform blockt automatische Abrufe",
+   "name": "mobile.de",
+   "ok": false,
+   "since": "2026-11-10T20:44:13Z"
+  }
+ },
+ "removed": {},
+ "version": 2
+}
