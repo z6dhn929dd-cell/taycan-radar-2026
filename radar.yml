@@ -1,0 +1,55 @@
+name: Taycan Radar
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # alle 10 Minuten (GitHub startet manchmal ein paar Minuten später)
+  workflow_dispatch:          # "Run workflow" = sofort prüfen
+
+permissions:
+  contents: write   # Bestand (state.json) speichern
+  pages: write      # Web-App veröffentlichen
+  id-token: write
+
+concurrency:
+  group: taycan-radar
+  cancel-in-progress: false
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests beautifulsoup4
+
+      - name: Plattformen prüfen
+        run: python radar.py --once
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+
+      - name: Bestand speichern
+        run: |
+          git config user.name "taycan-radar"
+          git config user.email "taycan-radar@users.noreply.github.com"
+          git add state.json docs/data.json
+          [ -d debug ] && git add -f debug || true
+          if ! git diff --cached --quiet; then
+            git commit -m "Radar-Update" --quiet
+            git pull --rebase --quiet || true
+            git push --quiet
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v4
