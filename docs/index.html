@@ -217,6 +217,14 @@ a.pcard:hover{border-color:var(--white)}
 .barcell .track i{display:block;height:100%;background:var(--white)}
 .callouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 
+/* Plattformen */
+.plist{display:flex;flex-direction:column;border-top:1px solid var(--hair)}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;padding:16px 2px;border-bottom:1px solid var(--hair)}
+.prow .pn{font-weight:600;font-stretch:118%;letter-spacing:.06em;font-size:15px;text-transform:uppercase}
+.prow .badges{margin-top:7px}
+.prow .go{margin-top:0;white-space:nowrap}
+@media (max-width:560px){ .prow{grid-template-columns:1fr} .prow .go{justify-self:start} }
+
 /* Preis-Check */
 .pc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:start}
 .pcform{display:flex;flex-direction:column;gap:16px;border:1px solid var(--hair);border-radius:6px;padding:16px;background:var(--panel)}
@@ -385,6 +393,13 @@ footer{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-tran
     <div><p class="sec-title">Vergleichbare Autos im Markt</p><div class="cards" id="pcSimilar"></div></div>
   </section>
 
+  <!-- PLATTFORMEN -->
+  <section class="view" id="v-suchen" hidden>
+    <div class="vhead"><p>Die Suche direkt auf jeder Plattform öffnen, neueste Inserate zuerst. Deine Kriterien oben werden übernommen, soweit die Plattform das kann.</p></div>
+    <div class="plist" id="plist"></div>
+    <p class="hint">Tipp für mobile.de: Die Suche in der mobile.de-App öffnen und „Suche speichern“ mit Benachrichtigung aktivieren. mobile.de lässt den Radar nicht automatisch mitlesen.</p>
+  </section>
+
   <!-- QUELLEN -->
   <section class="view" id="v-quellen" hidden>
     <div class="vhead"><p>Woher die Zahlen kommen und ob alles läuft.</p></div>
@@ -413,7 +428,7 @@ const BODIES = ["Limousine","Sport Turismo","Cross Turismo"];
 const EQUIP_DEFAULT = {perf_batt:"Performancebatterie Plus",pano:"Panoramadach",hal:"Hinterachslenkung",luft:"Luftfederung",bose:"Bose",burmester:"Burmester",
   hud:"Head-up-Display",innodrive:"InnoDrive",matrix:"Matrix-LED",chrono:"Sport Chrono",beifahrer:"Beifahrerdisplay",massage:"Massage",belueftung:"Sitzbelüftung",
   ahk:"Anhängerkupplung",lader22:"22-kW-Lader",waermepumpe:"Wärmepumpe",kamera360:"360°-Kamera",keramik:"Keramikbremse",sportdesign:"SportDesign",pdcc:"PDCC / Active Ride"};
-const TABS = [["uebersicht","Übersicht"],["markt","Markt"],["neu","Neu"],["verkauft","Verkauft"],["ladenhueter","Ladenhüter"],["analyse","Analyse"],["preischeck","Preis-Check"],["quellen","Quellen"]];
+const TABS = [["uebersicht","Übersicht"],["markt","Markt"],["neu","Neu"],["verkauft","Verkauft"],["ladenhueter","Ladenhüter"],["analyse","Analyse"],["preischeck","Preis-Check"],["suchen","Plattformen"],["quellen","Quellen"]];
 const NO_CRITERIA = new Set(["preischeck","quellen"]);
 const CAR_SVG = '<svg viewBox="0 0 200 64" fill="none" stroke="#f5f5f3" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 44c0-6 4-9 12-10l30-4c10-8 26-16 52-16 22 0 38 6 54 15 14 1 30 4 34 9 3 3 3 8 1 10l-4 1"/><path d="M8 44c-1 3 1 5 6 5h14M62 49h78M172 49h10"/><circle cx="45" cy="48" r="10"/><circle cx="157" cy="48" r="10"/><path d="M62 30c14-9 28-12 44-12l2 12zM114 18c14 0 26 4 38 11l-36 1z" stroke-width="1"/><path d="M178 34h12" stroke-width="2.2"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
@@ -641,6 +656,7 @@ function render(){
   if(S.view==="analyse") renderAnalyse(act);
   if(S.view==="preischeck") renderPC();
   if(S.view==="quellen") renderSources();
+  if(S.view==="suchen") renderSearches();
 }
 
 function uniqueCount(rs){ const seen=new Set(); let n=0; rs.forEach(r=>{ if(r.also&&r.also.length){ const fp=[r.year,r.price,Math.round((r.km||0)/1000)].join("|"); if(seen.has(fp)) return; seen.add(fp);} n++; }); return n; }
@@ -882,6 +898,54 @@ function renderPC(){
     .sort((a,b)=>a.d-b.d).slice(0,6).map(o=>o.x);
   $("pcSimilar").innerHTML = sim.length ? sim.map(x=>card(x,"markt")).join("") : `<div class="empty"><b>Keine Vergleichsautos</b>Noch keine Daten.</div>`;
   $("pcSimilar").querySelectorAll("img[data-fb]").forEach(img=>img.addEventListener("error",()=>img.remove(),{once:true}));
+}
+
+// ---------- Plattformen (Suchlinks aus den Kriterien)
+function searchParams(){
+  const F=S.F;
+  const model = F.models.length===1 && F.models[0]!=="Basis" ? F.models[0] : "";
+  const body = F.bodies.length===1 && F.bodies[0]!=="Limousine" ? F.bodies[0] : "";
+  return {q:[model, body].filter(Boolean).join(" "), price:num(F.maxPrice), year:num(F.minYear), km:num(F.maxKm),
+    approved: F.appr==="ja"||F.appr==="ja_wahr", vat: F.vat==="ja"||F.vat==="ja_wahr"};
+}
+const slugify = s => s.toLowerCase().trim().replace(/\s+/g,"-");
+const PLATFORM_LINKS = [
+  {id:"mobile", how:{approved:"word", vat:"filter", model:"filter"}, url(f){
+    const p=new URLSearchParams({isSearchRequest:"true", s:"Car", vc:"Car", sb:"doc", od:"down"});
+    p.set("ms","20100;;;"+("Taycan "+f.q).trim());
+    if(f.price) p.set("p",":"+f.price); if(f.year) p.set("fr",f.year+":"); if(f.km) p.set("ml",":"+f.km);
+    if(f.vat) p.set("vat","1"); if(f.approved) p.set("q","approved");
+    return "https://suchen.mobile.de/fahrzeuge/search.html?"+p.toString(); }},
+  {id:"autoscout", how:{approved:"word", vat:"filter", model:"word"}, url(f){
+    const p=new URLSearchParams({sort:"age", desc:"1", atype:"C", cy:"D"});
+    if(f.price) p.set("priceto",f.price); if(f.year) p.set("fregfrom",f.year); if(f.km) p.set("kmto",f.km);
+    if(f.vat) p.set("vatded","true");
+    const w=[f.q, f.approved?"approved":""].filter(Boolean).join(" "); if(w) p.set("search_query",w);
+    return "https://www.autoscout24.de/lst/porsche/taycan?"+p.toString(); }},
+  {id:"kleinanzeigen", how:{approved:"word", vat:null, model:"word"}, url(f){
+    const q=slugify(["porsche taycan", f.q, f.approved?"approved":""].filter(Boolean).join(" "));
+    return `https://www.kleinanzeigen.de/s-autos/${f.price?`preis::${f.price}/`:""}${q}/k0c216`; }},
+  {id:"porsche", how:{approved:"always", vat:"site", model:"site"}, url(){ return "https://finder.porsche.com/de/de-DE/search/taycan"; }},
+  {id:"ebay", how:{approved:"word", vat:null, model:"word"}, url(f){
+    const p=new URLSearchParams({_nkw:["porsche taycan", f.q, f.approved?"approved":""].filter(Boolean).join(" "), _sacat:"9801", _sop:"10"});
+    if(f.price) p.set("_udhi",f.price);
+    return "https://www.ebay.de/sch/i.html?"+p.toString(); }}
+];
+function renderSearches(){
+  const f = searchParams();
+  const st = (S.status && S.status.platforms) || {};
+  const counts = {}; S.data.active.filter(passes).forEach(r=>counts[r.platform]=(counts[r.platform]||0)+1);
+  $("plist").innerHTML = PLATFORM_LINKS.map(P=>{
+    const b=[];
+    if(f.approved) b.push(P.how.approved==="always" ? `<span class="badge good">Approved immer</span>` : `<span class="badge soft">Approved per Stichwort</span>`);
+    if(f.vat) b.push(P.how.vat==="filter" ? `<span class="badge good">MwSt. gefiltert</span>` : P.how.vat==="site" ? `<span class="badge soft">MwSt. dort einstellen</span>` : `<span class="badge soft">MwSt. selbst prüfen</span>`);
+    if(f.q) b.push(P.how.model==="site" ? `<span class="badge soft">Modell dort wählen</span>` : `<span class="badge soft">${esc(f.q)}</span>`);
+    if((f.year||f.km) && (P.id==="kleinanzeigen"||P.id==="ebay"||P.id==="porsche")) b.push(`<span class="badge soft">EZ/km dort einstellen</span>`);
+    const ps = st[P.id];
+    b.push((ps && ps.ok) || counts[P.id] ? `<span class="badge">${counts[P.id]||0} im Radar</span>` : `<span class="badge soft">nicht im Radar</span>`);
+    return `<div class="prow"><div><div class="pn">${esc(NAMES[P.id])}</div><div class="badges">${b.join("")}</div></div>
+      <a class="go" href="${esc(P.url(f))}" target="_blank" rel="noopener">Suche öffnen${ARROW}</a></div>`;
+  }).join("");
 }
 
 // ---------- Quellen
