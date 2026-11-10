@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write   # Bestand (state.json) speichern
-  pages: write      # Dashboard veröffentlichen
+  pages: write      # Web-App veröffentlichen
   id-token: write
 
 concurrency:
@@ -17,7 +17,7 @@ concurrency:
 jobs:
   radar:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 30
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
@@ -31,7 +31,7 @@ jobs:
       - run: pip install requests beautifulsoup4
 
       - name: Plattformen prüfen
-        run: python taycan_radar.py --once
+        run: python radar.py --once
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
 
@@ -40,10 +40,11 @@ jobs:
           git config user.name "taycan-radar"
           git config user.email "taycan-radar@users.noreply.github.com"
           git add state.json docs/data.json
+          [ -d debug ] && git add -f debug || true
           if ! git diff --cached --quiet; then
-            git commit -m "Radar-Update"
+            git commit -m "Radar-Update" --quiet
             git pull --rebase --quiet || true
-            git push
+            git push --quiet
           fi
 
       - uses: actions/configure-pages@v5
