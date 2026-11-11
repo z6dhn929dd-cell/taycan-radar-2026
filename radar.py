@@ -634,6 +634,7 @@ def parse_detail(platform: str, html: str) -> dict:
     title = meta("og:title")
     image = meta("og:image")
     body = ""
+    body_desc = None
     if platform == "kleinanzeigen":
         t = soup.select_one("#viewad-title")
         title = t.get_text(" ", strip=True) if t else title
@@ -651,23 +652,56 @@ def parse_detail(platform: str, html: str) -> dict:
         price_el = soup.select_one("#viewad-price")
         price = find_price(price_el.get_text(" ") if price_el else "")
     else:
-        detail_json = ""
+        detail_json, desc_txt = "", ""
         for blob in _json_blobs(soup):
             for d in _walk(blob):
                 if isinstance(d, dict) and ("listingDetails" in d or "vehicleDetails" in d):
-                    detail_json += json.dumps(d.get("listingDetails") or d.get("vehicleDetails"), ensure_ascii=False)[:60000]
+                    det = d.get("listingDetails") or d.get("vehicleDetails")
+                    detail_json += readable(det)[:60000]
+                    if isinstance(det, dict) and isinstance(det.get("description"), str):
+                        desc_txt = html_text(det["description"])
                     break
         main = soup.select_one("main") or soup.body or soup
         for junk in main.select("script, style, nav, footer, [class*='similar'], [class*='recommend'], [data-testid*='similar']"):
             junk.decompose()
         body = (detail_json + " | " + main.get_text(" ", strip=True))[:60000]
         price = None
+        if desc_txt:
+            m = re.search(r"sonderausstattung(en)?\s*:?", desc_txt, re.I)
+            nice = desc_txt[m.end():].strip() if m and len(desc_txt) - m.end() > 40 else desc_txt
+            body_desc = nice
+        else:
+            body_desc = None
     gone = bool(re.search(r"anzeige\s+(ist\s+)?(nicht\s+mehr\s+verfügbar|wurde\s+gelöscht|deaktiviert)|"
                           r"dieses\s+angebot\s+ist\s+nicht\s+mehr|inserat\s+ist\s+nicht\s+mehr\s+verfügbar|"
                           r"fahrzeug\s+wurde\s+bereits\s+verkauft|listing\s+has\s+ended|dieses\s+angebot\s+wurde\s+beendet", body[:5000] + " " + (title or ""), re.I))
+    desc = body_desc if platform != "kleinanzeigen" else None
+    if platform == "kleinanzeigen":
+        de = soup.select_one("#viewad-description-text")
+        desc = de.get_text(" ", strip=True) if de else None
     return {"title": clean(title, 160), "image": image, "body": body, "price": price,
             "year": find_year(body), "km": find_km(body), "gone": gone,
-            "description": clean(body, 600)}
+            "description": clean(desc, 600) if desc and not desc.lstrip().startswith("{") else None}
+
+
+def html_text(h: str) -> str:
+    t = re.sub(r"\s+", " ", BeautifulSoup(h.replace("<li>", " · <li>").replace("<br", " · <br"), "html.parser").get_text(" "))
+    t = re.sub(r"\s*:\s*", ": ", re.sub(r"(\s*·\s*)+", " · ", t))
+    return t.strip(" ·")
+
+
+def readable(obj, depth=0) -> str:
+    """Wandelt eingebettete Daten in lesbaren Text um (keine Klammern/Anführungszeichen)."""
+    if depth > 6:
+        return ""
+    if isinstance(obj, str):
+        return html_text(obj) if "<" in obj else obj
+    if isinstance(obj, dict):
+        return " | ".join(t for t in (readable(v, depth + 1) for k, v in obj.items()
+                                      if k not in ("id", "images", "url", "tracking", "searchResultType")) if t)
+    if isinstance(obj, list):
+        return " | ".join(t for t in (readable(v, depth + 1) for v in obj) if t)
+    return ""
 
 
 # ==========================================================================
@@ -920,6 +954,10 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
                              1 if r.get("recheck") else
                              2 if not r.get("detail_at") else 3,
                              r.get("detail_at") or "", r["first_seen"]), reverse=False)
+    for r in todo:
+        if (r.get("description") or "").lstrip().startswith("{") or (r.get("detail_text") or "").lstrip().startswith("{"):
+            r.pop("description", None)
+            r["recheck"] = True                   # Rohdaten aus Version 3.0 neu lesen
     todo = [r for r in todo if not r.get("detail_at") or r.get("recheck") or
             (now - parse_iso(r["detail_at"])) > timedelta(days=int(cfg.get("detail_refresh_days", 7)))]
     detail_count = 0
@@ -962,6 +1000,8 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
         rec["detail_text"] = d["body"][:6000]
         if d["description"]:
             rec["description"] = d["description"]
+        else:
+            rec.pop("description", None)
         refresh_derived(rec, now, cfg)
         time.sleep(random.uniform(1.2, 2.8))
     log.info("  %d Detailseiten gelesen", detail_count)
@@ -995,7 +1035,9 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
         state["history"] = {d: state["history"][d] for d in keep}
         state["last_full"] = stamp
         state["search_sig"] = sig
-    state["searches"] = {**state.get("searches", {}), **{n: {**st, "checked": stamp, "mode": mode} for n, st in search_status.items()}}
+    names_now = {(x.get("name") or x["platform"]) for x in cfg["searches"]}
+    state["searches"] = {n: v for n, v in {**state.get("searches", {}), **{n: {**st, "checked": stamp, "mode": mode}
+                         for n, st in search_status.items()}}.items() if n in names_now}
     state["version"] = VERSION
 
     save_json(STATE_FILE, state, compact=True)
