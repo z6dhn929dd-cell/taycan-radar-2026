@@ -745,6 +745,10 @@ function renderList(listId, moreId, list, kind){
   el.querySelectorAll("img[data-fb]").forEach(img=>img.addEventListener("error",()=>img.remove(),{once:true}));
   $(moreId).innerHTML = list.length>n ? `<button class="go ghost" type="button" data-more="${listId}">${list.length-n} weitere zeigen</button>` : "";
 }
+function descOf(r){
+  const ok = x => x && !/^\s*[{\[]/.test(x) ? x : "";
+  return ok(r.description) || ok(r.snippet);
+}
 function apprBadge(r){
   const a=r.approved||"unbekannt", u=r.approved_until?` bis ${r.approved_until}`:"";
   if(a==="ja") return `<span class="badge good">Approved${u}</span>`;
@@ -792,7 +796,7 @@ function card(r, kind){
       <h3 class="ctitle">${esc(r.title||"Porsche Taycan")}</h3>
       <div class="cprice"><span class="pr num">${eur(r.price)}</span><span class="rating ${R.cls}">${esc(R.txt)}</span></div>
       ${fairTxt?`<span class="fair">${fairTxt}${sold?" · letzter Preis":""}</span>`:""}
-      ${(r.description||r.snippet)?`<p class="snip">${esc(r.description||r.snippet)}</p>`:""}
+      ${descOf(r)?`<p class="snip">${esc(descOf(r))}</p>`:""}
       <div class="badges">${badges.join("")}${nego}</div>
       ${eq.length?`<div class="badges">${eq.slice(0,8).map(e=>`<span class="badge soft">${esc(e)}</span>`).join("")}${eq.length>8?`<span class="badge soft">+${eq.length-8}</span>`:""}</div>`:""}
       <div class="facts">${facts}</div>
