@@ -368,6 +368,8 @@ footer{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-tran
       <div><p class="sec-title">Was Ausstattung wert ist</p><div class="tw"><table class="t" id="tEquip"></table></div>
         <p class="hint" id="equipHint" style="margin-top:8px"></p></div>
     </div>
+    <div><p class="sec-title">Wie zuverlässig ist die Bewertung?</p><div class="kpis" id="valid"></div>
+      <p class="hint" id="validHint" style="margin-top:8px"></p></div>
     <div><p class="sec-title">So liest du einen Preis</p><div class="tw"><table class="t" id="tGuide"></table></div></div>
   </section>
 
@@ -510,63 +512,116 @@ function solve(A, b){
 }
 const NOW_Y = () => { const d=new Date(); return d.getFullYear() + d.getMonth()/12; };
 function fitModel(recs){
-  const rows = recs.filter(r=>priceOk(r) && r.year);
-  const out = {n: rows.length, ok:false};
-  if(rows.length < 20){ out.byModel = groupMedian(rows); return out; }
-  const cnt = k => rows.filter(k).length;
-  const vars = VARIANTS.filter(v=>cnt(r=>(r.model||"Basis")===v)>=2);
-  const baseVar = vars.slice().sort((a,b)=>cnt(r=>(r.model||"Basis")===b)-cnt(r=>(r.model||"Basis")===a))[0];
-  const bodies = ["Sport Turismo","Cross Turismo"].filter(b=>cnt(r=>r.body===b)>=2);
-  const eqKeys = Object.keys(EQ()).map(k=>[k,cnt(r=>(r.equip||[]).includes(k))]).filter(([k,c])=>c>=4 && c<=rows.length-4)
-                 .sort((a,b)=>b[1]-a[1]).slice(0, Math.max(0, Math.min(10, Math.floor(rows.length/8)))).map(x=>x[0]);
-  const useAppr = cnt(r=>r.approved==="ja"||r.approved==="wahrscheinlich")>=3 && cnt(r=>!(r.approved==="ja"||r.approved==="wahrscheinlich"))>=3;
-  const kmMed = median(rows.filter(r=>r.km!=null).map(r=>r.km/Math.max(.5,NOW_Y()-r.year+.5))) || 15000;
-  const feats = r => {
-    const age = Math.max(0, NOW_Y() - r.year - .5);
-    const km = r.km!=null ? r.km : kmMed*age;
-    const x = [1, age, km/10000];
-    vars.forEach(v=>{ if(v!==baseVar) x.push((r.model||"Basis")===v?1:0); });
-    bodies.forEach(b=>x.push(r.body===b?1:0));
-    eqKeys.forEach(k=>x.push((r.equip||[]).includes(k)?1:0));
-    if(useAppr) x.push(r.approved==="ja"||r.approved==="wahrscheinlich"?1:0);
-    return x;
+  const all = recs.filter(r=>priceOk(r) && r.year);
+  const out = {n: all.length, ok:false};
+  if(all.length < 20){ out.byModel = groupMedian(all); return out; }
+  const cnt = (rs,k) => rs.filter(k).length;
+  const ageOf = r => Math.max(0, NOW_Y() - r.year - .5);
+  const kmMed = median(all.filter(r=>r.km!=null).map(r=>r.km/Math.max(.5,ageOf(r)+.5))) || 15000;
+  const kmOf = r => r.km!=null ? r.km : kmMed*ageOf(r);
+  const has = (r,k) => (r.equip||[]).includes(k);
+  const appr = r => r.approved==="ja"||r.approved==="wahrscheinlich";
+  // Merkmale mit Namen, damit sich jeder Effekt später ablesen lässt
+  const cols = [["age", r=>ageOf(r)], ["age2", r=>ageOf(r)**2], ["km", r=>kmOf(r)/1e4], ["km2", r=>(kmOf(r)/1e4)**2]];
+  const mc = v => cnt(all, r=>(r.model||"Basis")===v);
+  const baseVar = VARIANTS.slice().sort((a,b)=>mc(b)-mc(a))[0];
+  VARIANTS.filter(v=>v!==baseVar && mc(v)>=3).forEach(v=>cols.push(["var:"+v, r=>(r.model||"Basis")===v?1:0]));
+  ["Sport Turismo","Cross Turismo"].filter(b=>cnt(all,r=>r.body===b)>=3).forEach(b=>cols.push(["body:"+b, r=>r.body===b?1:0]));
+  ["4S","GTS","Turbo","Turbo S"].filter(v=>v!==baseVar && mc(v)>=8).forEach(v=>cols.push(["agevar:"+v, r=>(r.model||"Basis")===v?ageOf(r):0]));
+  if(cnt(all,r=>r.year>=2025)>=5) cols.push(["facelift", r=>r.year>=2025?1:0]);
+  if(cnt(all,r=>r.year===2024)>=5) cols.push(["y2024", r=>r.year===2024?1:0]);
+  const eqKeys = Object.keys(EQ()).filter(k=>{ const c=cnt(all,r=>has(r,k)); return c>=8 && c<=all.length-8; });
+  eqKeys.forEach(k=>cols.push(["eq:"+k, r=>has(r,k)?1:0]));
+  const flag = (name,f) => { const c=cnt(all,f); if(c>=5 && c<=all.length-5) cols.push([name, r=>f(r)?1:0]); };
+  flag("appr", appr); flag("import", r=>!!r.import); flag("privat", r=>r.seller==="privat"); flag("schaden", r=>r.damage==="vorschaden");
+  if(cnt(all,r=>r.owners!=null) >= all.length*.25) flag("halter2", r=>r.owners>=2);
+  const feats = r => [1].concat(cols.map(c=>c[1](r)));
+  const fit = rows => {
+    const X = rows.map(feats), y = rows.map(r=>Math.log(r.price)), p = X[0].length;
+    const A = Array.from({length:p},()=>Array(p).fill(0)), b = Array(p).fill(0);
+    X.forEach((x,i)=>{ for(let j=0;j<p;j++){ b[j]+=x[j]*y[i]; for(let k=0;k<p;k++) A[j][k]+=x[j]*x[k]; } });
+    for(let j=1;j<p;j++) A[j][j] += 0.8;            // Glättung: verhindert wilde Werte bei seltenen Merkmalen
+    const beta = solve(A,b); if(!beta) return null;
+    const res = X.map((x,i)=> y[i] - x.reduce((s,v,j)=>s+v*beta[j],0));
+    return {beta, res, p};
   };
-  const X = rows.map(feats), y = rows.map(r=>Math.log(r.price));
-  const p = X[0].length;
-  const A = Array.from({length:p},()=>Array(p).fill(0)), b = Array(p).fill(0);
-  X.forEach((x,i)=>{ for(let j=0;j<p;j++){ b[j]+=x[j]*y[i]; for(let k=0;k<p;k++) A[j][k]+=x[j]*x[k]; } });
-  for(let j=1;j<p;j++) A[j][j] += 0.8;          // leichte Glättung gegen Ausreißer bei wenigen Daten
-  const beta = solve(A,b);
-  if(!beta){ out.byModel = groupMedian(rows); return out; }
-  const res = X.map((x,i)=> y[i] - x.reduce((s,v,j)=>s+v*beta[j],0));
-  const sd = Math.sqrt(res.reduce((s,v)=>s+v*v,0)/Math.max(1,rows.length-p));
-  let idx = 3 + vars.filter(v=>v!==baseVar).length + bodies.length;
-  const eqEff = eqKeys.map((k,i)=>({k, coef:beta[idx+i], n:cnt(r=>(r.equip||[]).includes(k))}));
-  idx += eqKeys.length;
-  Object.assign(out, {ok:true, beta, feats, sd: Math.max(.035, sd), eqEff, ageEff: beta[1], kmEff: beta[2], baseVar, vars, bodies,
-    apprEff: useAppr ? beta[idx] : null, medPrice: median(rows.map(r=>r.price))});
+  // 1. Durchlauf, dann extreme Ausreißer (z. B. Tippfehler, Leasingangebote) aussortieren und neu rechnen
+  let f1 = fit(all); if(!f1){ out.byModel = groupMedian(all); return out; }
+  const rows = all.filter((r,i)=>Math.abs(f1.res[i]) < .35);
+  const f2 = fit(rows) || f1;
+  const sd = Math.sqrt(f2.res.reduce((s,v)=>s+v*v,0)/Math.max(1,rows.length-f2.p));
+  const coef = name => { const i = cols.findIndex(c=>c[0]===name); return i<0 ? null : f2.beta[i+1]; };
+  const absErr = f2.res.map(Math.abs);
+  Object.assign(out, {ok:true, beta:f2.beta, feats, sd:Math.max(.035, sd), n:rows.length, outliers: all.length-rows.length,
+    typErr: median(absErr), within5: absErr.filter(e=>e<.05).length/absErr.length,
+    eqEff: eqKeys.map(k=>({k, coef:coef("eq:"+k), n:cnt(all,r=>has(r,k))})),
+    ageEff: coef("age") + 2*coef("age2")*3, kmEff: coef("km") + 2*coef("km2")*4,
+    apprEff: coef("appr"), importEff: coef("import"), halterEff: coef("halter2"), faceliftEff: coef("facelift"), privatEff: coef("privat"), schadenEff: coef("schaden"),
+    baseVar, medPrice: median(rows.map(r=>r.price))});
   return out;
 }
 function groupMedian(rows){ const g={}; rows.forEach(r=>{ (g[r.model||"Basis"] ||= []).push(r.price); }); const o={}; Object.entries(g).forEach(([k,v])=>{ if(v.length>=3) o[k]=median(v); }); return o; }
-function fairOf(r){
-  const M = S.model; if(!M || !r.year) return null;
-  if(M.ok){
-    const v = Math.exp(M.feats(r).reduce((s,x,j)=>s+x*M.beta[j],0));
-    return {fair:v, lo: v*Math.exp(-M.sd), hi: v*Math.exp(M.sd)};
-  }
-  const m = M.byModel && M.byModel[r.model||"Basis"]; return m ? {fair:m, lo:m*.9, hi:m*1.1, rough:true} : null;
+// ---------- Marktwert aus drei unabhängigen Methoden
+// 1. Regression über den ganzen Markt  2. Die 8 ähnlichsten Autos (Unterschiede herausgerechnet)  3. AutoScout24-Marktpreis, falls vorhanden
+const AGE = r => Math.max(0, NOW_Y() - r.year - .5);
+const KM = r => r.km!=null ? r.km : 15000*AGE(r);
+const fpOf = r => [r.year, r.price, Math.round((r.km||0)/1000)].join("|");
+function dist(a,b){
+  const ea=new Set(a.equip||[]), eb=b.equip||[]; let diff=0;
+  eb.forEach(k=>{ if(!ea.has(k)) diff++; }); ea.forEach(k=>{ if(!eb.includes(k)) diff++; });
+  return ((a.model||"Basis")===(b.model||"Basis")?0:3) + ((a.body||"Limousine")===(b.body||"Limousine")?0:1.5)
+    + Math.abs(a.year-b.year) + Math.abs(KM(a)-KM(b))/15000 + diff*.12
+    + (((a.approved==="ja"||a.approved==="wahrscheinlich")===(b.approved==="ja"||b.approved==="wahrscheinlich"))?0:.4)
+    + ((a.owners!=null&&b.owners!=null&&a.owners!==b.owners)?.3:0);
 }
+function estimate(r){
+  const M = S.model; if(!M || !r.year) return null;
+  if(!M.ok){ const m = M.byModel && M.byModel[r.model||"Basis"]; return m ? {fair:m, lo:m*.9, hi:m*1.1, rough:true, methods:[], conf:"niedrig", sd:.1} : null; }
+  const fx = M.feats(r), reg = fx.reduce((s,x,j)=>s+x*M.beta[j],0);
+  const fp = r.price ? fpOf(r) : null;
+  const near = [];
+  for(const t of S.pool){
+    if(t.key===r.key || (fp && t.also && fpOf(t)===fp)) continue;
+    const d = dist(r,t);
+    if(near.length<8 || d<near[near.length-1].d){ near.push({t,d}); near.sort((a,b)=>a.d-b.d); if(near.length>8) near.pop(); }
+  }
+  let comp=null, avgD=null;
+  if(near.length>=4){
+    let sw=0, sv=0;
+    near.forEach(({t,d})=>{ const ft=M.feats(t); let adj=Math.log(t.price); for(let j=0;j<fx.length;j++) adj+=(fx[j]-ft[j])*M.beta[j]; const w=1/(1+d); sw+=w; sv+=w*adj; });
+    comp = sv/sw; avgD = near.reduce((s,n)=>s+n.d,0)/near.length;
+  }
+  const asM = r.as_median ? Math.log(r.as_median) : null;
+  const parts = [["Marktmodell", reg, .4]];
+  if(comp!=null) parts.push(["Vergleichsautos", comp, .3]);
+  if(asM!=null) parts.push(["AutoScout24", asM, .3]);
+  const wsum = parts.reduce((s,p)=>s+p[2],0);
+  const lf = parts.reduce((s,p)=>s+p[1]*p[2],0)/wsum;
+  const vals = parts.map(p=>p[1]); const spread = Math.max(...vals)-Math.min(...vals);
+  let sd = Math.max(.04, Math.sqrt((.8*M.sd)**2 + (spread/2)**2)) * (avgD!=null && avgD>2.5 ? 1.25 : 1);
+  const conf = parts.length>=3 && spread<.06 && (avgD??9)<2 ? "hoch" : parts.length>=2 && spread<.10 && (avgD??9)<3 ? "mittel" : "niedrig";
+  return {fair:Math.exp(lf), lo:Math.exp(lf-sd), hi:Math.exp(lf+sd), sd, conf, spread,
+    methods: parts.map(p=>({name:p[0], v:Math.exp(p[1]), lv:p[1]})), near: near.slice(0,5).map(n=>n.t), avgD};
+}
+function fairOf(r){ return estimate(r); }
 function rate(r){
   if(!priceOk(r)) return {cls:"r-na", txt: r.price ? "Preis unklar" : "ohne Preis", dev:null};
-  const f = fairOf(r); if(!f) return {cls:"r-na", txt:"zu wenig Daten", dev:null};
-  const dev = r.price/f.fair - 1;
-  const p = Math.round(dev*100);
-  const s = (p>0?"+":"") + p + " %";
-  if(dev <= -.08) return {cls:"r-top", txt:"Top-Preis "+s, dev, f};
-  if(dev <= -.03) return {cls:"r-good", txt:"Guter Preis "+s, dev, f};
-  if(dev < .03) return {cls:"r-fair", txt:"Fair "+s, dev, f};
-  if(dev < .08) return {cls:"r-high", txt:"Erhöht "+s, dev, f};
-  return {cls:"r-over", txt:"Zu teuer "+s, dev, f};
+  const f = estimate(r); if(!f) return {cls:"r-na", txt:"zu wenig Daten", dev:null};
+  const lp = Math.log(r.price), dev = r.price/f.fair - 1, z = (lp-Math.log(f.fair))/f.sd;
+  const p = Math.round(dev*100), s = (p>0?"+":"") + p + " %";
+  const sure = f.conf !== "niedrig";
+  const allLow = sure && f.methods.every(m=>lp < m.lv-.02), allHigh = sure && f.methods.every(m=>lp > m.lv+.02);
+  const base = {dev, f, z};
+  if(f.rough) return Object.assign(base, {cls:"r-na", txt:"grob "+s});
+  if(dev <= -.25) return Object.assign(base, {cls:"r-high", txt:"Auffällig günstig "+s+" · prüfen"});
+  if(dev >= .25) return Object.assign(base, {cls:"r-over", txt:"Auffällig teuer "+s});
+  if(dev <= -.10 && z <= -1.6 && allLow) return Object.assign(base, {cls:"r-top", txt:"Top-Preis "+s});
+  if(dev <= -.05 && z <= -.9 && allLow) return Object.assign(base, {cls:"r-good", txt:"Guter Preis "+s});
+  if(dev >= .10 && z >= 1.6 && allHigh) return Object.assign(base, {cls:"r-over", txt:"Zu teuer "+s});
+  if(dev >= .05 && z >= .9 && allHigh) return Object.assign(base, {cls:"r-high", txt:"Erhöht "+s});
+  if(dev <= -.05) return Object.assign(base, {cls:"r-fair", txt:"Eher günstig "+s+" · unsicher"});
+  if(dev >= .05) return Object.assign(base, {cls:"r-fair", txt:"Eher teuer "+s+" · unsicher"});
+  return Object.assign(base, {cls:"r-fair", txt:"Fair "+s});
 }
 
 // ---------- load
@@ -581,6 +636,7 @@ async function load(){
   }catch(e){ S.data = sampleData(); S.status = sampleStatus(); S.sample = true; }
   const recent = S.data.removed.filter(r=> Date.now()-t(r.removed) < 90*DAY);
   S.model = fitModel(S.data.active.concat(recent));
+  S.pool = S.data.active.concat(recent).filter(r=>priceOk(r) && r.year);
   S.rate = new Map(); S.data.active.concat(S.data.removed).forEach(r=>S.rate.set(r.key, rate(r)));
   $("sampleBanner").hidden = !S.sample;
   buildCriteria(); buildPC(); render();
@@ -697,7 +753,7 @@ function renderOverview(act, news, sold){
   drawStock($("chStock"), dk, stock); drawFlow($("chFlow"), dk, inn, out);
 
   const withR = act.map(r=>[r,S.rate.get(r.key)]).filter(([r,x])=>x && x.dev!=null);
-  const best = withR.sort((a,b)=>a[1].dev-b[1].dev)[0];
+  const best = withR.filter(x=>x[1].dev>-.25).sort((a,b)=>a[1].dev-b[1].dev)[0];
   const fastest = S.data.removed.filter(passes).filter(r=>!r.baseline).sort((a,b)=>days(a)-days(b))[0];
   const dropped = act.filter(r=>priceDrop(r)>0).sort((a,b)=>priceDrop(b)-priceDrop(a))[0];
   const longest = act.slice().sort((a,b)=>days(b)-days(a))[0];
@@ -712,7 +768,7 @@ function renderOverview(act, news, sold){
 function sortRecs(list, how){
   const R = r => S.rate.get(r.key) || {};
   const f = {
-    deal:(a,b)=>((R(a).dev??9)-(R(b).dev??9)),
+    deal:(a,b)=>((R(a).dev!=null&&R(a).dev>-.25?R(a).dev:9)-(R(b).dev!=null&&R(b).dev>-.25?R(b).dev:9)),
     new:(a,b)=>t(b.first_seen)-t(a.first_seen),
     pa:(a,b)=>(priceOk(a)?a.price:1e9)-(priceOk(b)?b.price:1e9),
     pd:(a,b)=>(priceOk(b)?b.price:0)-(priceOk(a)?a.price:0),
@@ -730,7 +786,7 @@ function renderMarkt(act){
 }
 function renderLh(lh){
   const list = sortRecs(lh, "over");
-  const over = list.filter(r=>{ const x=S.rate.get(r.key); return x && x.dev!=null && x.dev>=.03; });
+  const over = list.filter(r=>{ const x=S.rate.get(r.key); return x && x.dev!=null && x.dev>=.04; });
   $("cntLh").textContent = `${list.length} Autos ab ${S.lh} Tagen · ${over.length} davon über Marktwert`;
   renderList("lLh","moreLh", list, "lh");
 }
@@ -782,7 +838,8 @@ function card(r, kind){
   if(!sold && r.removed) badges.push(`<span class="badge soft">schon weg</span>`);
   const when = sold ? `weg ${ago(t(r.removed))}` : kind==="neu" ? ago(t(r.first_seen)) : `online ${daysTxt(r)}`;
   const img = r.image ? `<img src="${esc(r.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fb>` : "";
-  const fairTxt = R.f ? `Marktwert ca. ${eur(R.f.fair)}${R.f.rough?" (grob)":""}` : "";
+  const fairTxt = R.f ? `Marktwert ca. ${eur(R.f.fair)}${R.f.rough?" (grob)":` · Sicherheit ${R.f.conf}`}` : "";
+  const methTxt = R.f && R.f.methods && R.f.methods.length ? R.f.methods.map(m=>`${m.name} ${keur(m.v)}`).join(" · ") : "";
   const nego = kind==="lh" && R.f && r.price>R.f.fair ? `<span class="badge warn">Spielraum ca. ${eur(r.price-R.f.fair)}</span>` : "";
   const facts = sold
     ? `<div><div class="l">Standzeit</div><div class="v">${daysTxt(r)}</div></div><div><div class="l">Startpreis</div><div class="v">${startP?keur(startP):"–"}</div></div>
@@ -796,6 +853,7 @@ function card(r, kind){
       <h3 class="ctitle">${esc(r.title||"Porsche Taycan")}</h3>
       <div class="cprice"><span class="pr num">${eur(r.price)}</span><span class="rating ${R.cls}">${esc(R.txt)}</span></div>
       ${fairTxt?`<span class="fair">${fairTxt}${sold?" · letzter Preis":""}</span>`:""}
+      ${methTxt?`<span class="fair" style="font-size:11px;color:var(--dim)">${esc(methTxt)}</span>`:""}
       ${descOf(r)?`<p class="snip">${esc(descOf(r))}</p>`:""}
       <div class="badges">${badges.join("")}${nego}</div>
       ${eq.length?`<div class="badges">${eq.slice(0,8).map(e=>`<span class="badge soft">${esc(e)}</span>`).join("")}${eq.length>8?`<span class="badge soft">+${eq.length-8}</span>`:""}</div>`:""}
@@ -849,23 +907,50 @@ function renderAnalyse(act){
   const M = S.model;
   if(M && M.ok){
     const base = M.medPrice;
-    const rows = [["1 Jahr älter", Math.exp(M.ageEff)-1, null], ["10.000 km mehr", Math.exp(M.kmEff)-1, null]]
-      .concat(M.apprEff!=null?[["Porsche Approved", Math.exp(M.apprEff)-1, null]]:[])
-      .concat(M.eqEff.map(e=>[EQ()[e.k], Math.exp(e.coef)-1, e.n]));
+    const opt = (l,c) => c!=null ? [[l, Math.exp(c)-1, null]] : [];
+    const rows = [["1 Jahr älter (bei ca. 3 Jahren)", Math.exp(M.ageEff)-1, null], ["10.000 km mehr (bei ca. 40.000 km)", Math.exp(M.kmEff)-1, null]]
+      .concat(opt("Facelift (ab 2025)", M.faceliftEff), opt("Porsche Approved", M.apprEff), opt("Import / China", M.importEff),
+              opt("Privatverkauf", M.privatEff), opt("Vorschaden", M.schadenEff), opt("2 oder mehr Vorbesitzer", M.halterEff))
+      .concat(M.eqEff.slice().sort((a,b)=>b.coef-a.coef).map(e=>[EQ()[e.k], Math.exp(e.coef)-1, e.n]));
     $("tEquip").innerHTML = `<thead><tr><th>Merkmal</th><th>Effekt</th><th>≈ in €</th><th>Autos</th></tr></thead><tbody>` +
       rows.map(([l,p,n])=>`<tr><td class="p">${esc(l)}</td><td class="${p>=0?"plus":"muted"}">${p>=0?"+":""}${(p*100).toFixed(1)} %</td><td>${p>=0?"+":"−"}${eur(Math.abs(p*base))}</td><td class="muted">${n??"alle"}</td></tr>`).join("") + `</tbody>`;
-    $("equipHint").textContent = `Geschätzt aus ${M.n} Autos mit Preis, Baujahr und km. Effekte gelten bei sonst gleichem Auto (Modell, Baujahr, km). Bei wenigen Autos schwanken die Werte noch stark.`;
+    $("equipHint").textContent = `Geschätzt aus ${M.n} Autos (${M.outliers} Ausreißer nicht mitgerechnet). Effekte gelten bei sonst gleichem Auto. Genauigkeit: Der Marktwert liegt typisch ${(M.typErr*100).toFixed(1)} % neben dem Angebotspreis, bei ${Math.round(M.within5*100)} % der Autos innerhalb von 5 %.`;
   } else {
     $("tEquip").innerHTML = `<tbody><tr><td class="txt">Noch zu wenige Autos mit Preis und Baujahr (mindestens 20). Bis dahin gibt es nur eine grobe Bewertung je Modell.</td></tr></tbody>`;
     $("equipHint").textContent = "";
   }
 
+  renderValidation();
   $("tGuide").innerHTML = `<thead><tr><th>Bewertung</th><th>Abweichung vom Marktwert</th><th style="text-align:left">Bedeutung</th></tr></thead><tbody>
-    <tr><td><span class="rating r-top">Top-Preis</span></td><td>8 % und mehr darunter</td><td class="txt">Schnell sein. Prüfen, warum er so günstig ist (Vorschaden, Akku, Ausstattung).</td></tr>
-    <tr><td><span class="rating r-good">Guter Preis</span></td><td>3 – 8 % darunter</td><td class="txt">Kaufen, wenn Zustand passt.</td></tr>
-    <tr><td><span class="rating r-fair">Fair</span></td><td>± 3 %</td><td class="txt">Marktüblich, ein paar Hundert Euro sind meist drin.</td></tr>
-    <tr><td><span class="rating r-high">Erhöht</span></td><td>3 – 8 % darüber</td><td class="txt">Verhandeln, besonders nach langer Standzeit.</td></tr>
-    <tr><td><span class="rating r-over">Zu teuer</span></td><td>8 % und mehr darüber</td><td class="txt">Nur mit sehr guter Ausstattung oder Zustand gerechtfertigt.</td></tr></tbody>`;
+    <tr><td><span class="rating r-top">Top-Preis</span></td><td>10 % und mehr darunter, alle Methoden einig</td><td class="txt">Schnell sein. Prüfen, warum er so günstig ist (Vorschaden, Akku, Ausstattung).</td></tr>
+    <tr><td><span class="rating r-good">Guter Preis</span></td><td>5 – 10 % darunter, alle Methoden einig</td><td class="txt">Kaufen, wenn Zustand passt.</td></tr>
+    <tr><td><span class="rating r-fair">Fair</span></td><td>innerhalb ± 5 %</td><td class="txt">Marktüblich, ein paar Hundert Euro sind meist drin.</td></tr>
+    <tr><td><span class="rating r-high">Erhöht</span></td><td>5 – 10 % darüber, alle Methoden einig</td><td class="txt">Verhandeln, besonders nach langer Standzeit.</td></tr>
+    <tr><td><span class="rating r-fair">Eher günstig · unsicher</span></td><td>5 % und mehr darunter</td><td class="txt">Die Methoden sind sich nicht einig oder es gibt wenige Vergleichsautos. Genauer hinschauen.</td></tr>
+    <tr><td><span class="rating r-high">Auffällig günstig</span></td><td>25 % und mehr darunter</td><td class="txt">Oft Import, Unfall, Tippfehler oder Lockangebot. Erst genau prüfen.</td></tr>
+    <tr><td><span class="rating r-over">Zu teuer</span></td><td>10 % und mehr darüber, alle Methoden einig</td><td class="txt">Nur mit sehr guter Ausstattung oder Zustand gerechtfertigt.</td></tr></tbody>`;
+}
+
+// ---------- Gegenprobe: eigenes Urteil ohne AutoScout24 vs. AutoScout24-Marktpreis, und Verkaufstempo je Bewertung
+function renderValidation(){
+  const M = S.model;
+  if(!M || !M.ok){ $("valid").innerHTML=""; $("validHint").textContent="Noch zu wenige Daten."; return; }
+  const withAS = S.data.active.filter(r=>r.as_median && priceOk(r) && r.year);
+  let agree=0, n=0;
+  withAS.forEach(r=>{
+    const x = Object.assign({}, r, {as_median:null}); const R = rate(x);
+    if(R.cls==="r-good"||R.cls==="r-top"){ n++; if(r.price < r.as_median) agree++; }
+  });
+  const sold = S.data.removed.filter(r=>!r.baseline && priceOk(r) && r.year);
+  const grp = c => sold.filter(r=>{ const x=S.rate.get(r.key); return x && c.includes(x.cls); }).map(days);
+  const g = grp(["r-good","r-top"]), h = grp(["r-high","r-over"]);
+  $("valid").innerHTML = `
+    <div class="kpi"><div class="l">Typische Abweichung</div><div class="v num">${(M.typErr*100).toFixed(1)}<small>%</small></div><div class="s">Marktmodell zu Angebotspreisen</div></div>
+    <div class="kpi"><div class="l">Gegenprobe AutoScout24</div><div class="v num">${n?Math.round(agree/n*100)+"<small>%</small>":"–"}</div><div class="s">${n?`${agree} von ${n} „gut“ bestätigt`:"noch keine Daten"}</div></div>
+    <div class="kpi"><div class="l">Gute Preise weg nach</div><div class="v num">${g.length?Math.round(median(g)):"–"}<small>${g.length?"Tagen":""}</small></div><div class="s">${g.length?`Median aus ${g.length}`:"sammelt noch"}</div></div>
+    <div class="kpi"><div class="l">Teure weg nach</div><div class="v num">${h.length?Math.round(median(h)):"–"}<small>${h.length?"Tagen":""}</small></div><div class="s">${h.length?`Median aus ${h.length}`:"sammelt noch"}</div></div>
+    <div class="kpi"><div class="l">Autos mit AutoScout-Wert</div><div class="v num">${withAS.length}</div><div class="s">dritte Methode aktiv</div></div>`;
+  $("validHint").textContent = "„Gut“ und „Teuer“ vergibt die App nur, wenn alle Methoden in dieselbe Richtung zeigen und der Abstand größer ist als die übliche Streuung. Sonst steht dort „Eher günstig · unsicher“. Werden gute Preise schneller verkauft als teure, bestätigt das die Bewertung zusätzlich.";
 }
 
 // ---------- Preis-Check
@@ -888,13 +973,13 @@ function renderPC(){
     $("pcResult").innerHTML = `<span class="clabel">Marktwert für dieses Auto</span><span class="big num">${eur(f.fair)}</span>
       <span class="fair">Üblicher Bereich ${eur(lo)} – ${eur(hi)}${f.rough?" (grob, wenige Daten)":""}</span>${verdict}
       <div class="scale" aria-hidden="true">
-        <div class="band" style="left:0;width:${pos(f.fair*.97)}%;background:var(--good-bg);border:1px solid rgba(159,220,184,.5)"></div>
-        <div class="band" style="left:${pos(f.fair*.97)}%;width:${pos(f.fair*1.03)-pos(f.fair*.97)}%;background:rgba(255,255,255,.12)"></div>
-        <div class="band" style="left:${pos(f.fair*1.03)}%;width:${100-pos(f.fair*1.03)}%;background:var(--warn-bg);border:1px solid rgba(232,201,138,.5)"></div>
+        <div class="band" style="left:0;width:${pos(f.fair*.95)}%;background:var(--good-bg);border:1px solid rgba(159,220,184,.5)"></div>
+        <div class="band" style="left:${pos(f.fair*.95)}%;width:${pos(f.fair*1.05)-pos(f.fair*.95)}%;background:rgba(255,255,255,.12)"></div>
+        <div class="band" style="left:${pos(f.fair*1.05)}%;width:${100-pos(f.fair*1.05)}%;background:var(--warn-bg);border:1px solid rgba(232,201,138,.5)"></div>
         <div class="mk" style="left:${pos(f.fair)}%"></div><span class="lab" style="left:${pos(f.fair)}%">Marktwert</span>
         ${r.price?`<div class="mk" style="left:${pos(r.price)}%;background:var(--warn);width:3px"></div>`:""}
       </div>
-      <p class="hint" style="margin-top:14px">Berechnet aus ${M?M.n:0} Autos. Grün = günstiger als üblich, gelb = teurer.</p>`;
+      <p class="hint" style="margin-top:14px">${f.methods&&f.methods.length?esc(f.methods.map(m=>m.name+" "+eur(m.v)).join(" · "))+" · ":""}Sicherheit ${f.conf||"niedrig"}. Berechnet aus ${M?M.n:0} Autos. Grün = günstiger als üblich, gelb = teurer.</p>`;
   }
   const sim = S.data.active.filter(x=>priceOk(x) && x.year)
     .map(x=>({x, d: ((x.model||"Basis")===r.model?0:3) + ((x.body||"Limousine")===r.body?0:1.5) + Math.abs(x.year-r.year)*1 + Math.abs((x.km??r.km)-r.km)/20000
