@@ -635,6 +635,7 @@ def parse_detail(platform: str, html: str) -> dict:
     image = meta("og:image")
     body = ""
     body_desc = None
+    struct: dict = {}
     if platform == "kleinanzeigen":
         t = soup.select_one("#viewad-title")
         title = t.get_text(" ", strip=True) if t else title
@@ -657,6 +658,7 @@ def parse_detail(platform: str, html: str) -> dict:
             for d in _walk(blob):
                 if isinstance(d, dict) and ("listingDetails" in d or "vehicleDetails" in d):
                     det = d.get("listingDetails") or d.get("vehicleDetails")
+                    struct.update(autoscout_struct(det))
                     detail_json += readable(det)[:60000]
                     if isinstance(det, dict) and isinstance(det.get("description"), str):
                         desc_txt = html_text(det["description"])
@@ -679,9 +681,82 @@ def parse_detail(platform: str, html: str) -> dict:
     if platform == "kleinanzeigen":
         de = soup.select_one("#viewad-description-text")
         desc = de.get_text(" ", strip=True) if de else None
-    return {"title": clean(title, 160), "image": image, "body": body, "price": price,
+    if platform != "autoscout":
+        m = re.search(r"(anzahl der fahrzeughalter|fahrzeughalter|vorbesitzer|halter)\W{0,6}(\d)\b", body, re.I)
+        if m:
+            struct["owners"] = int(m.group(2))
+    return {"struct": struct, "title": clean(title, 160), "image": image, "body": body, "price": price,
             "year": find_year(body), "km": find_km(body), "gone": gone,
             "description": clean(desc, 600) if desc and not desc.lstrip().startswith("{") else None}
+
+
+def _find_key(obj, rx, types, depth=0):
+    if depth > 8:
+        return None
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if re.search(rx, k, re.I) and isinstance(v, types) and (bool in types or not isinstance(v, bool)):
+                return v
+        for v in obj.values():
+            r = _find_key(v, rx, types, depth + 1)
+            if r is not None:
+                return r
+    elif isinstance(obj, list):
+        for v in obj:
+            r = _find_key(v, rx, types, depth + 1)
+            if r is not None:
+                return r
+    return None
+
+
+def autoscout_struct(det) -> dict:
+    """Liest die strukturierten Angaben einer AutoScout24-Detailseite (genauer als Text)."""
+    out: dict = {}
+    if not isinstance(det, dict):
+        return out
+    for d in _walk(det):
+        if isinstance(d, dict) and "evaluationRanges" in d and d.get("median"):
+            out["as_median"] = int(d["median"])
+            rng = [[x.get("minimum"), x.get("maximum"), x.get("category")] for x in d.get("evaluationRanges") or [] if isinstance(x, dict)]
+            if rng:
+                out["as_ranges"] = rng
+            if isinstance(d.get("taxDeductible"), bool):
+                out["tax_deductible"] = d["taxDeductible"]
+            break
+    if "tax_deductible" not in out:
+        v = _find_key(det, r"^taxDeductible$", (bool,))
+        if isinstance(v, bool):
+            out["tax_deductible"] = v
+    veh = det.get("vehicle") if isinstance(det.get("vehicle"), dict) else {}
+    out["as_variant"] = " ".join(str(veh.get(k)) for k in ("variant", "modelVersionInput") if veh.get(k)) or None
+    if veh.get("mileageInKmRaw") is not None:
+        out["km"] = to_int(veh.get("mileageInKmRaw"))
+    if veh.get("firstRegistrationDateRaw"):
+        y = find_year("EZ " + str(veh["firstRegistrationDateRaw"]))
+        if y:
+            out["year"] = y
+    if veh.get("bodyColor"):
+        out["color"] = str(veh["bodyColor"])
+    for rx, key in ((r"previousOwner|numberOfOwners|ownerCount|owners$", "owners"),):
+        v = _find_key(det, rx, (int, str))
+        if v not in (None, "") and to_int(v) is not None and to_int(v) <= 9:
+            out[key] = to_int(v)
+    v = _find_key(det, r"rawPowerInKw|powerInKw|powerKw", (int, float, str))
+    if v and to_int(v) and 50 <= to_int(v) <= 900:
+        out["kw"] = to_int(v)
+    v = _find_key(det, r"^hadAccident$", (bool,))
+    if isinstance(v, bool):
+        out["accident_free"] = not v
+    v = _find_key(det, r"accidentFree", (bool,))
+    if isinstance(v, bool):
+        out["accident_free"] = v
+    v = _find_key(det, r"fullServiceHistory|serviceHistory|serviceBook", (bool,))
+    if isinstance(v, bool):
+        out["service_history"] = v
+    v = _find_key(det, r"^warranty", (int, str))
+    if v not in (None, ""):
+        out["warranty"] = str(v)[:40]
+    return {k: v for k, v in out.items() if v not in (None, "")}
 
 
 def html_text(h: str) -> str:
@@ -793,8 +868,14 @@ def excluded_reason(rec: dict, cfg: dict) -> str | None:
 
 
 def refresh_derived(rec: dict, now: datetime, cfg: dict) -> None:
-    info = analyse_text(rec.get("title") or "", (rec.get("snippet") or "") + " | " + (rec.get("detail_text") or ""),
-                        rec["platform"], now)
+    info = analyse_text((rec.get("title") or "") + " " + (rec.get("as_variant") or ""),
+                        (rec.get("snippet") or "") + " | " + (rec.get("detail_text") or ""), rec["platform"], now)
+    if rec.get("tax_deductible") is True:
+        info["vat"] = "ja"
+    elif rec.get("tax_deductible") is False:
+        info["vat"] = "nein"
+    if rec.get("kw") and not info.get("ps"):
+        info["ps"] = round(rec["kw"] * 1.36)
     for k, v in info.items():
         if v not in (None, ""):
             rec[k] = v
@@ -958,6 +1039,8 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
         if (r.get("description") or "").lstrip().startswith("{") or (r.get("detail_text") or "").lstrip().startswith("{"):
             r.pop("description", None)
             r["recheck"] = True                   # Rohdaten aus Version 3.0 neu lesen
+        elif r["platform"] == "autoscout" and r.get("detail_at") and "struct_v" not in r:
+            r["recheck"] = True                   # strukturierte Daten (Marktpreis, Halter, MwSt.) nachladen
     todo = [r for r in todo if not r.get("detail_at") or r.get("recheck") or
             (now - parse_iso(r["detail_at"])) > timedelta(days=int(cfg.get("detail_refresh_days", 7)))]
     detail_count = 0
@@ -997,7 +1080,16 @@ def run_once(cfg: dict, force_full: bool = False) -> dict:
             rec["price"] = d["price"]
         if d["image"] and not rec.get("image"):
             rec["image"] = d["image"]
-        rec["detail_text"] = d["body"][:6000]
+        st = d.get("struct") or {}
+        rec["struct_v"] = 1
+        for k in ("km", "year"):
+            if st.get(k) and not rec.get(k):
+                rec[k] = st[k]
+        for k in ("as_median", "as_ranges", "tax_deductible", "as_variant", "color", "owners", "kw",
+                  "service_history", "warranty", "accident_free"):
+            if k in st:
+                rec[k] = st[k]
+        rec["detail_text"] = d["body"][:15000]
         if d["description"]:
             rec["description"] = d["description"]
         else:
@@ -1146,7 +1238,8 @@ def dump_debug(pid: str, name: str, html: str) -> None:
 # ==========================================================================
 PUBLIC_KEYS = ("key", "platform", "title", "url", "price", "year", "km", "ps", "image", "snippet", "description",
                "first_seen", "baseline", "prices", "removed", "gone_reason", "model", "body", "approved",
-               "approved_until", "vat", "seller", "equip", "damage", "soh", "price_odd", "detail_at", "import")
+               "approved_until", "vat", "seller", "equip", "damage", "soh", "price_odd", "detail_at", "import",
+               "as_median", "as_ranges", "owners", "color", "service_history", "warranty", "accident_free")
 
 
 def write_outputs(state: dict, now: datetime, mode: str, detail_count: int) -> None:
